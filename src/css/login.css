@@ -1,0 +1,36 @@
+body,
+html {
+  height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+#bg-img {
+  background-image: url("../../assets/home_background.jpg");
+
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; 
+}
+
+
+#jumbo {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  color: white;
+
+  width: 60%;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  padding: 20px;
+}
