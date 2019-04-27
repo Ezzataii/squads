@@ -1,5 +1,5 @@
 <?php
-$db = new PDO ("mysql:dbname=squad", "root", "");
+include("../util/db.php");
 
 $path = $_SERVER["PATH_INFO"];
 $method = $_SERVER['REQUEST_METHOD'];

@@ -1,6 +1,6 @@
 <?php
 include("../util/defHeader.php");
-$db = new PDO("mysql:dbname=squad", "root", "");
+include("../util/db.php");
 if (!isset($_REQUEST["p"])) { } else {
   $profile = $_REQUEST["p"];
 
