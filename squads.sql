@@ -137,3 +137,20 @@ CREATE TABLE GROUPS
 );
 
 
+
+
+-- -----
+-- POSTS
+-- -----
+CREATE TABLE POSTS
+(
+  `Post_ID`      INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `User`         VARCHAR(30),
+  `Date_Created` DATE,
+  `Text`         TEXT,
+  `MediaType`    VARCHAR(30),
+  `MediaPath`    TINYTEXT,
+  FOREIGN KEY (`User`) REFERENCES USERS(`UserName`)
+);
+
+CREATE INDEX idx_posts_users ON POSTS (`User`); 

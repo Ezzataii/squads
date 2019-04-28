@@ -1,6 +1,8 @@
 <?php
 include("../util/defHeader.php");
 include("../util/db.php");
+
+
 if (!isset($_REQUEST["p"])) { 
 
 } else {
@@ -24,7 +26,7 @@ if (!isset($_REQUEST["p"])) {
       <?php include("../components/navbar.php"); ?>
 
       <div style="display: inline-block; padding-top: 50px;">
-        <h1 class="display-4" style="float:left; color: red;"> &nbsp; <?= $_REQUEST["p"] ?> Does Not Exist</h1>
+        <h1 class="display-4" style="float:left; color: red;"> &nbsp; <?= $_REQUEST["p"] ?>Does Not Exist</h1>
       </div>
 
       <?php include("../components/footer.php"); ?>
@@ -44,7 +46,10 @@ if (!isset($_REQUEST["p"])) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-      <?php include("../util/bootJQ.php") ?>
+      <?php 
+        include("../util/bootJQ.php"); 
+        $user = $_REQUEST["p"];
+      ?>
 
       <title><?= $_REQUEST["p"] ?></title>
     </head>
@@ -56,13 +61,14 @@ if (!isset($_REQUEST["p"])) {
       <div class="jumbotron profile-header">
 
         <div style="display: inline-block; padding-top: 50px;">
-          <img src="<?= $_SESSION["profilePicture"] ?>" alt="Profile Picture" style="float:left; width: 100px; margin: 0px 30px; border: 4px solid black;" id="profilePicture">
+          <img src="<?= $db->query("SELECT profilePicturePath FROM USERS WHERE username = '$user';")->fetchAll()[0]["profilePicturePath"] ?>" 
+          alt="Profile Picture" style="float:left; width: 100px; margin: 0px 30px; border: 4px solid black;" id="profilePicture">
           <h1 class="display-4" style="float:left">  <?= $_REQUEST["p"] ?>'s Profile</h1>
         </div>
 
         <nav class="nav nav-tabs profile-nav">
           <li class="nav-item">
-            <a class="nav-link profile-navbtn active" href="feed">Feed</a>
+            <a class="nav-link profile-navbtn active" href="timeline">Timeline</a>
           </li>
           <li class="nav-item">
             <a class="nav-link profile-navbtn" href="about" id="aboutProfileNavBtn">About</a>
@@ -90,6 +96,10 @@ if (!isset($_REQUEST["p"])) {
     </html>
 
     <script>
+      $(() => {
+        $(".profile-navbtn[href=timeline]")[0].click();
+      });
+
       $(".profile-navbtn").click((e) => {
         e.preventDefault();
         $(".profile-navbtn").removeClass("active");

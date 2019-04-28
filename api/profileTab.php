@@ -8,84 +8,104 @@ session_start();
 
 
 //GET FEED
-if ($path == "/feed" && $method == "GET") { }
+if ($path == "/timeline" && $method == "GET") {
+
+  if ($_SESSION["username"] == $user) : ?>
+    <div class="container">
+
+      <?php include("../components/postForm.php"); ?>
+
+    <?php endif;
+
+  $posts = $db->query("SELECT * FROM POSTS WHERE user = '$user' ORDER BY Date_Created DESC;")->fetchAll();
+  include("../components/post.php");
+  foreach ($posts as $post) {
+    createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"]);
+  }
+  ?>
+  </div>
+
+<?php
+}
 
 //GET ABOUT
 else if ($path == "/about" && $method == "GET") {
   $result = $db->query("SELECT About FROM USERS WHERE username = '$user';")->fetchAll()[0];
   ?>
-  
+
   <?php if ($_SESSION["username"] == $user) : ?>
 
-  <div class="container">
-    <h4>Update Profile Picture:</h4>
-    <div class="input-group mb-3">
-      <div class="custom-file">
-        <input type="file" class="custom-file-input" id="profilePictureFileInput">
-        <label class="custom-file-label" for="profilePictureFileInput">Choose file</label>
+    <div class="container">
+      <h4>Update Profile Picture:</h4>
+      <div class="input-group mb-3">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="profilePictureFileInput">
+          <label class="custom-file-label" for="profilePictureFileInput">Choose file</label>
+        </div>
+        <div class="input-group-append">
+          <button class="btn btn-primary" id="uploadProfilePictureBtn">Upload</button>
+        </div>
       </div>
-      <div class="input-group-append">
-        <button class="btn btn-primary" id="uploadProfilePictureBtn">Upload</button>
-      </div>
-    </div>
-    <span id="profilePictureStatus"></span>
-  </div>
-
-
-  <div class="container">
-    <div class="form-group">
-      <h4>About</h4>
-      <textarea class="form-control" id="aboutFormText" rows="3"><?= $result['About'] ?></textarea>
+      <span id="profilePictureStatus"></span>
     </div>
 
-    <button class="btn btn-primary" id="aboutFormTextBtn">Update</button>
-    <div id="aboutStatus"></div>
-  </div>
+
+    <div class="container">
+      <div class="form-group">
+        <h4>About</h4>
+        <textarea class="form-control" id="aboutFormText" rows="3"><?= $result['About'] ?></textarea>
+      </div>
+
+      <button class="btn btn-primary" id="aboutFormTextBtn">Update</button>
+      <div id="aboutStatus"></div>
+    </div>
 
 
-  <style>
- 
-  </style>
+    <style>
+
+    </style>
 
 
-  <script>
-    $('#profilePictureFileInput').change((e) => {
-      var fileName = e.target.files[0].name; 
-      $(e.target).next('.custom-file-label').html(fileName);
-    });
-
-    $("#uploadProfilePictureBtn").click((e) => {
-      var imageData = new FormData();
-      imageData.append('profilePicture', $("#profilePictureFileInput").prop('files')[0]);
-      $.ajax({
-        type: 'POST',
-        url: '../api/user-about.php/update/profile-picture?u=<?= $user ?>',
-        data: imageData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: (res) => {
-          $("#profilePictureStatus").html(res);
-        }
+    <script>
+      $('#profilePictureFileInput').change((e) => {
+        var fileName = e.target.files[0].name;
+        $(e.target).next('.custom-file-label').html(fileName);
       });
-    }); 
 
-    $("#aboutFormTextBtn").click((e) => {
-      e.preventDefault();
-      $.ajax({
-        type: 'POST',
-        url: '../api/user-about.php/update/about?u=<?= $user ?>',
-        contentType: 'application/json',
-        data: JSON.stringify({about: $("#aboutFormText").val()}), 
-        success: (res) => {
-          $("#aboutStatus").html(res);
-        }
+      $("#uploadProfilePictureBtn").click((e) => {
+        var imageData = new FormData();
+        imageData.append('profilePicture', $("#profilePictureFileInput").prop('files')[0]);
+        $.ajax({
+          type: 'POST',
+          url: '../api/user-about.php/update/profile-picture?u=<?= $user ?>',
+          data: imageData,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: (res) => {
+            $("#profilePictureStatus").html(res);
+          }
+        });
       });
-    });
-  </script>
+
+      $("#aboutFormTextBtn").click((e) => {
+        e.preventDefault();
+        $.ajax({
+          type: 'POST',
+          url: '../api/user-about.php/update/about?u=<?= $user ?>',
+          contentType: 'application/json',
+          data: JSON.stringify({
+            about: $("#aboutFormText").val()
+          }),
+          success: (res) => {
+            $("#aboutStatus").html(res);
+          }
+        });
+      });
+    </script>
 
 
-  <?php else: ?>
+  <?php else : ?>
     <div class="container">
       <div class="form-group">
         <label for="aboutFormText">About <?= $user ?>:</label>
@@ -93,7 +113,7 @@ else if ($path == "/about" && $method == "GET") {
       </div>
     </div>
   <?php endif; ?>
-  <?php
+<?php
 }
 
 //GET FRIENDS

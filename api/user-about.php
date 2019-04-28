@@ -32,7 +32,6 @@ if ($path == "/update/about" && $method == "POST") {
 //UPDATE PROFILE PICTURE
 else if ($path == "/update/profile-picture" && $method == "POST") {
   if(!isset($_FILES["profilePicture"])) {
-    print("here");
     header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
     die();
   } else {
@@ -58,3 +57,5 @@ else if ($path == "/update/profile-picture" && $method == "POST") {
 else { 
   header($_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
 }
+
+?>
