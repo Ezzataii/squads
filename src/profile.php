@@ -1,12 +1,14 @@
 <?php
 include("../util/defHeader.php");
 include("../util/db.php");
-if (!isset($_REQUEST["p"])) { } else {
+if (!isset($_REQUEST["p"])) { 
+
+} else {
   $profile = $_REQUEST["p"];
 
   $rows = $db->query("SELECT username FROM USERS WHERE username = '$profile';")->fetchAll();
   if (count($rows) == 0) {
-    ?>
+  ?>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -31,9 +33,8 @@ if (!isset($_REQUEST["p"])) { } else {
     </html>
 
   <?php
-} else {
+  } else {
   ?>
-
 
     <!DOCTYPE html>
     <html lang="en">
@@ -55,13 +56,9 @@ if (!isset($_REQUEST["p"])) { } else {
       <div class="jumbotron profile-header">
 
         <div style="display: inline-block; padding-top: 50px;">
-          <img src="../assets/default-profile" alt="Profile Picture" style="float:left; width: 60px; margin: 0px 30px;" id="profilePicture">
+          <img src="<?= $_SESSION["profilePicture"] ?>" alt="Profile Picture" style="float:left; width: 100px; margin: 0px 30px; border: 4px solid black;" id="profilePicture">
           <h1 class="display-4" style="float:left">  <?= $_REQUEST["p"] ?>'s Profile</h1>
         </div>
-
-        <?php if (isset($_SESSION["username"]) && $_REQUEST["p"] == $_SESSION["username"]) : ?>
-          <button class="btn btn-outline-primary my-2 my-sm-0" type="button">Edit Page</button>
-        <?php endif; ?>
 
         <nav class="nav nav-tabs profile-nav">
           <li class="nav-item">
@@ -86,8 +83,6 @@ if (!isset($_REQUEST["p"])) { } else {
       <div class="profile-body">
 
       </div>
-
-
 
       <?php include("../components/footer.php"); ?>
     </body>
@@ -134,6 +129,6 @@ if (!isset($_REQUEST["p"])) { } else {
     </style>
 
   <?php
-}
+  }
 }
 ?>

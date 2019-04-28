@@ -11,7 +11,7 @@
   <button type="submit" class="btn btn-primary">Login</button>
 
   <div>
-    <div class="error" class="center" style="color:red;"></div>
+    <div class="loginError" class="center" style="color:red;"></div>
   </div>
 </form>
 
@@ -28,7 +28,7 @@
         if(res === "") {
           window.location = "index.php";
         } else {
-          $(".error").html(res);
+          $(".loginError").html(res);
         }
       }
     })

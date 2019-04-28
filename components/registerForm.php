@@ -28,7 +28,7 @@
   <button type="submit" class="btn btn-primary">Register</button>
 
   <div>
-    <div class="error" class="center" style="color:red;"></div>
+    <div class="registerError" class="center" style="color:red;"></div>
   </div>
 
 </form>
@@ -48,7 +48,7 @@
         $(".error").html("");
         alert("Registered!");
       } else {
-        $(".error").html(res);
+        $(".registerError").html(res);
       }
     }
   })

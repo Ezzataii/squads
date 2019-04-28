@@ -14,28 +14,32 @@ if ($path == "/feed" && $method == "GET") { }
 else if ($path == "/about" && $method == "GET") {
   $result = $db->query("SELECT About FROM USERS WHERE username = '$user';")->fetchAll()[0];
   ?>
+  
+  <?php if ($_SESSION["username"] == $user) : ?>
+
   <div class="container">
     <h4>Update Profile Picture:</h4>
     <div class="input-group mb-3">
       <div class="custom-file">
-        <input type="file" class="custom-file-input" id="profilePictureUpload">
-        <label class="custom-file-label" for="profilePictureUpload" aria-describedby="profilePictureUpload">Choose file</label>
+        <input type="file" class="custom-file-input" id="profilePictureFileInput">
+        <label class="custom-file-label" for="profilePictureFileInput">Choose file</label>
       </div>
       <div class="input-group-append">
-        <span class="input-group-text" id="profilePictureUpload">Upload</span>
+        <button class="btn btn-primary" id="uploadProfilePictureBtn">Upload</button>
       </div>
     </div>
+    <span id="profilePictureStatus"></span>
   </div>
 
-  <?php if ($_SESSION["username"] == $user) : ?>
+
   <div class="container">
-      <div class="form-group">
-        <h4>About</h4>
-        <textarea class="form-control" id="aboutFormText" rows="3"><?= $result['About'] ?></textarea>
-      </div>
-  
-      <button class="btn btn-primary" id="aboutFormTextBtn">Update</button>
-      <div id="aboutStatus"></div>
+    <div class="form-group">
+      <h4>About</h4>
+      <textarea class="form-control" id="aboutFormText" rows="3"><?= $result['About'] ?></textarea>
+    </div>
+
+    <button class="btn btn-primary" id="aboutFormTextBtn">Update</button>
+    <div id="aboutStatus"></div>
   </div>
 
 
@@ -45,16 +49,37 @@ else if ($path == "/about" && $method == "GET") {
 
 
   <script>
+    $('#profilePictureFileInput').change((e) => {
+      var fileName = e.target.files[0].name; 
+      $(e.target).next('.custom-file-label').html(fileName);
+    });
+
+    $("#uploadProfilePictureBtn").click((e) => {
+      var imageData = new FormData();
+      imageData.append('profilePicture', $("#profilePictureFileInput").prop('files')[0]);
+      $.ajax({
+        type: 'POST',
+        url: '../api/user-about.php/update/profile-picture?u=<?= $user ?>',
+        data: imageData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: (res) => {
+          $("#profilePictureStatus").html(res);
+        }
+      });
+    }); 
+
     $("#aboutFormTextBtn").click((e) => {
       e.preventDefault();
       $.ajax({
-          type: 'POST',
-          url: '../api/user-about.php/update/about?u=<?= $user ?>',
-          contentType: 'application/json',
-          data: JSON.stringify({about: $("#aboutFormText").val()}), 
-          succes: (res) => {
-            $("#aboutProfileNavBtn").click();
-          }
+        type: 'POST',
+        url: '../api/user-about.php/update/about?u=<?= $user ?>',
+        contentType: 'application/json',
+        data: JSON.stringify({about: $("#aboutFormText").val()}), 
+        success: (res) => {
+          $("#aboutStatus").html(res);
+        }
       });
     });
   </script>

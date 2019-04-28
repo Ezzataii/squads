@@ -16,7 +16,7 @@ if(!isset($_SESSION["username"]) || $_SESSION["username"] != $user) {
   die();
 }
 
-//GET SEND FRIEND
+//UPDATE ABOUT
 if ($path == "/update/about" && $method == "POST") {
   $json = json_decode(file_get_contents('php://input'));
   if(!isset($json->about)) {
@@ -29,6 +29,28 @@ if ($path == "/update/about" && $method == "POST") {
   }
 }
 
+//UPDATE PROFILE PICTURE
+else if ($path == "/update/profile-picture" && $method == "POST") {
+  if(!isset($_FILES["profilePicture"])) {
+    print("here");
+    header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+    die();
+  } else {
+
+    $target_dir = "../db_blob/$user.profilePicture.";
+    $target_file = $target_dir . time() .".". basename($_FILES["profilePicture"]["name"]);
+    $uploadOk = true;
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+    if (move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $target_file)) {
+      $db->exec("UPDATE USERS SET profilePicturePath = '$target_file' WHERE username = '$user'");
+      $_SESSION["profilePicture"] = $target_file; 
+      print("The file ". basename( $_FILES["profilePicture"]["name"]). " has been uploaded.");
+    } else {
+      print("Sorry, there was an error uploading your file.");
+    }
+  }
+} 
 
 
 

@@ -3,13 +3,16 @@
 -- ----
 CREATE TABLE USERS
 (
-  `UserName`  VARCHAR(30) NOT NULL PRIMARY KEY,
-  `FirstName` VARCHAR(255),
-  `LastName`  VARCHAR(255),
-  `Email`     VARCHAR(255),
-  `Password`  VARCHAR(40),
-  `Token`  	  VARCHAR(255),
-  `About`     TEXT
+  `UserName`        VARCHAR(30) NOT NULL PRIMARY KEY,
+  `FirstName`       VARCHAR(255),
+  `LastName`        VARCHAR(255),
+  `Email`           VARCHAR(255),
+  `Password`        VARCHAR(40),
+  `Token`  	        VARCHAR(255),
+  `Auth_Token`      VARCHAR(255),
+  `Authenticated`   tinyint(1),
+  `About`           TEXT,
+  `ProfilePicturePath` TINYTEXT
 );
 
 
