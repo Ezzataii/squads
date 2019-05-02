@@ -75,7 +75,32 @@ else if ($path == "/post/video" && $method == "POST") {
   }
 }
 
+else if ($path == "/delete/post" && $method == "GET") {
+  if(!isset($_REQUEST["postid"])) {
+    header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+    die();
+  }
+  $PostID = $_REQUEST["postid"];
 
+  $post = $db->query("SELECT MediaType, MediaPath FROM POSTS WHERE Post_ID = '$PostID';");
+
+  if($post == false) {
+    print("post does not exist.");
+    die();
+  }
+
+  $post = $post->fetchAll()[0];
+
+  if($post["MediaType"] == "Image" || $post["MediaType"] == "Video") {
+    if (file_exists($post["MediaPath"])) {
+      unlink($post["MediaPath"]);
+    }
+  }
+
+  $db->query("DELETE FROM POSTS WHERE Post_ID = '$PostID';");
+
+  print("post deleted.");
+}
 
 
 else { 

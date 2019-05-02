@@ -15,6 +15,9 @@
       <li class="nav-item">
         <a class="nav-link" href="about.php">About</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="feed.php">Feed</a>
+      </li>
     </ul>
   
 

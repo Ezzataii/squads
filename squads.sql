@@ -11,6 +11,7 @@ CREATE TABLE USERS
   `Token`  	        VARCHAR(255),
   `Auth_Token`      VARCHAR(255),
   `Authenticated`   tinyint(1),
+  `LevelOfAccess`   VARCHAR(30),
   `About`           TEXT,
   `ProfilePicturePath` TINYTEXT
 );

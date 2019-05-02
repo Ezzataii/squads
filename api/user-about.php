@@ -51,6 +51,34 @@ else if ($path == "/update/profile-picture" && $method == "POST") {
   }
 } 
 
+//GET LEVEL OF ACCESS
+else if ($path == "/level-of-access" && $method == "GET") {
+  $response = $db->query("SELECT LevelOfAccess FROM USERS WHERE UserName = '$user';")->fetchAll()[0];
+
+  print($response["LevelOfAccess"]);
+}
+
+//UPDATE LEVEL OF ACCESS
+else if ($path == "/update/level-of-access" && $method == "GET") {
+  if(!isset($_REQUEST["l"])) {
+    header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+    die();
+  }
+  $levelOfAccess = $_REQUEST["l"];
+
+  if(  $levelOfAccess != "public" 
+    && $levelOfAccess != "private" 
+    && $levelOfAccess != "friends-only") {
+      header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+      die();
+  }
+
+
+  $response = $db->exec("UPDATE USERS SET LevelOfAccess = '$levelOfAccess' WHERE UserName = '$user';");
+
+  print("Updated Level of Access!");
+}
+
 
 
 

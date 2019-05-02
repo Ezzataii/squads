@@ -9,9 +9,10 @@ session_start();
 
 //GET FEED
 if ($path == "/timeline" && $method == "GET") {
-
-  if ($_SESSION["username"] == $user) : ?>
-    <div class="container">
+  ?> 
+  <div class="container">
+  <?php if ($_SESSION["username"] == $user) : ?>
+    
 
       <?php include("../components/postForm.php"); ?>
 
@@ -20,7 +21,7 @@ if ($path == "/timeline" && $method == "GET") {
   $posts = $db->query("SELECT * FROM POSTS WHERE user = '$user' ORDER BY Date_Created DESC;")->fetchAll();
   include("../components/post.php");
   foreach ($posts as $post) {
-    createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"]);
+    createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"]);
   }
   ?>
   </div>
@@ -36,7 +37,7 @@ else if ($path == "/about" && $method == "GET") {
   <?php if ($_SESSION["username"] == $user) : ?>
 
     <div class="container">
-      <h4>Update Profile Picture:</h4>
+      <h4>Update Profile Picture</h4>
       <div class="input-group mb-3">
         <div class="custom-file">
           <input type="file" class="custom-file-input" id="profilePictureFileInput">
@@ -48,6 +49,28 @@ else if ($path == "/about" && $method == "GET") {
       </div>
       <span id="profilePictureStatus"></span>
     </div>
+
+    <div class="container">
+      <h4>Update Profile Level of Access</h4>
+      
+        
+      <label class="radio-inline">
+        <input type="radio" name="levelOfAccessRadio" id="levelOfAccessRadioPublic" value="public">
+        Public
+      </label> &nbsp;
+      <label class="radio-inline">
+        <input type="radio" name="levelOfAccessRadio" id="levelOfAccessRadioFriendsOnly" value="friends-only">
+        Friends Only
+      </label> &nbsp;
+      <label>
+        <input type="radio" name="levelOfAccessRadio" id="levelOfAccessRadioPrivate" value="private">
+        Private
+      </label>
+      <br>
+      <button class="btn btn-primary" id="levelOfAccessBtn">Update</button>
+      <span id="levelOfAccessStatus"></span>
+    </div>
+    <br>
 
 
     <div class="container">
@@ -67,6 +90,13 @@ else if ($path == "/about" && $method == "GET") {
 
 
     <script>
+      $(() => {
+        $.get("../api/user-about.php/level-of-access?u=<?= $user ?>", (data) => {
+          $(`input:radio[name="levelOfAccessRadio"][value=${data}]`).prop("checked", true);
+        });
+        
+      }); 
+
       $('#profilePictureFileInput').change((e) => {
         var fileName = e.target.files[0].name;
         $(e.target).next('.custom-file-label').html(fileName);
@@ -85,6 +115,14 @@ else if ($path == "/about" && $method == "GET") {
           success: (res) => {
             $("#profilePictureStatus").html(res);
           }
+        });
+      });
+
+      $("#levelOfAccessBtn").click((e) => {
+        e.preventDefault();
+        var levelOfAccess = $(`input:radio[name="levelOfAccessRadio"]:checked`).val();
+        $.get(`../api/user-about.php/update/level-of-access?u=<?= $user ?>&l=${levelOfAccess}`, (data) => {
+          $("#levelOfAccessStatus").html(data);
         });
       });
 
