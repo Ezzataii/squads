@@ -11,19 +11,26 @@ session_start();
 if ($path == "/timeline" && $method == "GET") {
   ?> 
   <div class="container">
-  <?php if ($_SESSION["username"] == $user) : ?>
-    
+  <?php if ($_SESSION["username"] == $user) : 
+    include("../components/postForm.php"); 
 
-      <?php include("../components/postForm.php"); ?>
+    $posts = $db->query("SELECT * FROM POSTS WHERE user = '$user' ORDER BY Date_Created DESC;")->fetchAll();
+    include("../components/post.php");
+    foreach ($posts as $post) {
+      createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"]);
+    }
+    ?>
+  <?php else :
 
-    <?php endif;
+    //TODO ADD VISIBILITY 
 
-  $posts = $db->query("SELECT * FROM POSTS WHERE user = '$user' ORDER BY Date_Created DESC;")->fetchAll();
-  include("../components/post.php");
-  foreach ($posts as $post) {
-    createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"]);
-  }
-  ?>
+    $posts = $db->query("SELECT * FROM POSTS p JOIN USERS u ON p.User = u.Username WHERE user = '$user' AND u.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
+    include("../components/post.php");
+    foreach ($posts as $post) {
+      createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"]);
+    }
+    endif;?>
+
   </div>
 
 <?php

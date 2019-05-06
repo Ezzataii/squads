@@ -64,6 +64,7 @@ if (!isset($_REQUEST["p"])) {
           <img src="<?= $db->query("SELECT profilePicturePath FROM USERS WHERE username = '$user';")->fetchAll()[0]["profilePicturePath"] ?>" 
           alt="Profile Picture" style="float:left; width: 100px; margin: 0px 30px; border: 4px solid black;" id="profilePicture">
           <h1 class="display-4" style="float:left">  <?= $_REQUEST["p"] ?>'s Profile</h1>
+          <h4>(<?= $db->query("SELECT LevelOfAccess FROM USERS WHERE UserName = '$user';")->fetchAll()[0]["LevelOfAccess"] ?>)</h4>
         </div>
 
         <nav class="nav nav-tabs profile-nav">

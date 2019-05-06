@@ -10,6 +10,7 @@ if(!isset($_REQUEST["u"])) {
 }
 $user = $_REQUEST["u"];
 
+
 session_start();
 if(!isset($_SESSION["username"]) || $_SESSION["username"] != $user) {
   header($_SERVER["SERVER_PROTOCOL"] . ' 403 (Access Denied)');
