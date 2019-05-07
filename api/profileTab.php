@@ -11,7 +11,7 @@ session_start();
 if ($path == "/timeline" && $method == "GET") {
   ?> 
   <div class="container">
-  <?php if ($_SESSION["username"] == $user) : 
+  <?php if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) : 
     include("../components/postForm.php"); 
 
     $posts = $db->query("SELECT * FROM POSTS WHERE user = '$user' ORDER BY Date_Created DESC;")->fetchAll();

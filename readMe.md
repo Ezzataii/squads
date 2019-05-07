@@ -36,3 +36,8 @@ force_recipient=
 hostname=localhost
 ```
 5. Enable ```openssl``` and ```sockets``` extensions for PHP compiler
+
+
+## Getting Socket Setup:
+1. Go to your php folder (mine is ```wamp64\bin\php\php7.2.14```)
+2. In your terminal do: ```php.exe -q ../../../www/278/project/util/socket.php```

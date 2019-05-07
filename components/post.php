@@ -11,7 +11,7 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
   ?>
   <div class="card post">
 
-    <?php if ($_SESSION["username"] == $Username): ?>
+    <?php if (isset($_SESSION["username"]) &&  $_SESSION["username"] == $Username): ?>
       <div class="post-header">
         <input type="hidden" name="PostID" value="<?= $PostID ?>">
         <button type="button" class="close deletePostBtn">
