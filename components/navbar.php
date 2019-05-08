@@ -44,7 +44,16 @@
             <a class="nav-link" href="profile.php?p=<?= $_SESSION["username"] ?>"><?= $_SESSION["username"] ?></a>
           </li>
         </ul>
+
         &nbsp;
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="inbox.php"><i class="fa fa-inbox" style="color: #909DA0;"></i></a>
+          </li>
+        </ul>
+        
+
+        &nbsp;&nbsp;&nbsp;
         <button class="btn btn-outline-primary my-2 my-sm-0" type="button" id="logoutBtn">Log Out</button>
       </div>
     <?php endif; ?>

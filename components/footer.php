@@ -47,9 +47,9 @@
 
 <style>
   .footer {
-    /* position: relative; */
+    position: relative;
     width: 100%;
-    /* bottom: -30vh; */
+    bottom: -30vh;
   }
 
   .footer__block {

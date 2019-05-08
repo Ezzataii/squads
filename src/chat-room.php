@@ -123,11 +123,11 @@ $color_pick = array_rand($colors);
 .msg-box {
   margin: 30px 0px;
   padding: 10px;
-  height: 750px;
+  height: 700px;
   overflow-y: scroll;
 
-  border: solid #444444 2px;
-  background-color: #eeeeee;
+  border: solid #343A40 2px;
+  background-color: #E9ECEF;
 }
 
 .connection {

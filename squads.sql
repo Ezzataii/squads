@@ -31,6 +31,7 @@ CREATE TABLE FRIENDS
   PRIMARY KEY (`User`, `Friend`)
 );
 
+
 CREATE TABLE FRIEND_REQUESTS
 (
   `From_User` VARCHAR(30),
@@ -155,3 +156,28 @@ CREATE TABLE POSTS
 );
 
 CREATE INDEX idx_posts_users ON POSTS (`User`); 
+
+
+
+CREATE TABLE COMMENTS 
+(
+  `Comment_ID`          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `Comment`             TEXT,
+  `Date_Created`        DATE
+);
+
+
+
+CREATE TABLE MESSAGES 
+(
+  `Message_ID`        INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `Sender`            VARCHAR(30),
+  `Receiver`          VARCHAR(30),
+  `Message`           TEXT,
+  `Date_Created`      DATE,
+  FOREIGN KEY (`Sender`) REFERENCES USERS(`UserName`),
+  FOREIGN KEY (`Receiver`) REFERENCES USERS(`UserName`)
+);
+
+CREATE INDEX MESSAGES_SENDER_INDEX ON MESSAGES (`Sender`);
+CREATE INDEX MESSAGES_RECEIVER_INDEX ON MESSAGES (`Receiver`);
