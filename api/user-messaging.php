@@ -53,11 +53,6 @@ else if ($path == "/send-message" && $method == "POST") {
 else { 
   header($_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
 }
-/**
- 
-INSERT INTO `messages` (`Sender`, `Receiver`, `Message`, `Date_Created`) 
-    VALUES ('Kira', 'Ezzataii', 'This is a testing message number 2',CURRENT_TIMESTAMP);
- */
 ?>
 
 
