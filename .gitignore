@@ -1,2 +1,3 @@
-**/db_blob
+db_blob/*
+!db_blob/.gitkeep
 /creds.txt
