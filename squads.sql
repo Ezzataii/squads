@@ -162,10 +162,14 @@ CREATE INDEX idx_posts_users ON POSTS (`User`);
 CREATE TABLE COMMENTS 
 (
   `Comment_ID`          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `Post`                INT,
+  `User`                VARCHAR(30),
   `Comment`             TEXT,
-  `Date_Created`        DATE
+  `Date_Created`        DATE,
+  FOREIGN KEY (`Post`) REFERENCES POSTS(`Post_ID`),
+  FOREIGN KEY (`User`) REFERENCES USERS(`UserName`)
 );
-
+CREATE INDEX COMMENTS_POST_INDEX ON COMMENTS (`Post`);
 
 
 CREATE TABLE MESSAGES 
