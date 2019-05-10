@@ -22,6 +22,8 @@ if ($path == "/login" && $method == "POST") {
       $valid = false;
     } else if ($result[0]["Password"] != $Password) {
       $valid = false;
+    } else if($result[0]["UserName"] != $Username) {
+      $valid = false;
     } else if(!$result[0]["Authenticated"]) {
       print("Not Authenticated");
       die();
