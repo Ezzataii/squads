@@ -96,7 +96,19 @@ else if ($path == "/about" && $method == "GET") {
       <button class="btn btn-primary" id="aboutFormTextBtn">Update</button>
       <div id="aboutStatus"></div>
     </div>
+    <br>
+    <br>
 
+    <div class="container">
+      <h4>Account Settings</h4>
+      <br>
+
+      <button class="btn btn-primary" id="deactivateAccountBtn">Deactivate Account</button>
+      &nbsp;
+      &nbsp;
+      <button class="btn btn-primary" id="deleteAccountBtn"> Delete Account</button>
+
+    </div>
 
     <style>
 
@@ -109,7 +121,42 @@ else if ($path == "/about" && $method == "GET") {
           $(`input:radio[name="levelOfAccessRadio"][value=${data}]`).prop("checked", true);
         });
         
-      }); 
+      });
+
+      // Am working heeerrreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+      $("#deactivateAccountBtn").click((e) => {
+        // alert("Deactivation clicked");
+        if(confirm("Are you sure you want to deactivate your account?")){
+          $url = `../api/user-account.php/deactivate-account?u=<?= $_SESSION["username"] ?>`;
+
+          $.ajax({
+            url: $url,
+            type: 'POST',
+            success: (res) => {
+              alert(res);
+              // window.location = "login.php"; 
+            }
+          });
+        }
+      });
+       
+
+      $("#deleteAccountBtn").click((e) => {
+       
+        if(confirm("Are you sure you want to delete your account?")){
+          $url = `../api/user-account.php/delete-account?u=<?= $_SESSION["username"] ?>`;
+
+          $.ajax({
+            url: $url,
+            type: 'POST',
+            success: (res) => {
+              alert(res);
+              window.location = "login.php"; 
+            }
+          });
+        }
+      });
+      // till heeerrrrrrrrrrrrrrrrrrrrrrrrrrrrrreeeeeeeeeeeeeeeeee
 
       $('#profilePictureFileInput').change((e) => {
         var fileName = e.target.files[0].name;
