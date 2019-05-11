@@ -25,7 +25,12 @@ if ($path == "/login" && $method == "POST") {
     } else if($result[0]["UserName"] != $Username) {
       $valid = false;
     } else if(!$result[0]["Authenticated"]) {
-      print("Not Authenticated");
+      $Auth_Token = izrand(32);
+      $Username = $result[0]["UserName"];
+      $Email = $result[0]["Email"];
+
+      print("Account is not Active.");
+      sendActivationEmail($Email, $Username, $Auth_Token);
       die();
     }
 
@@ -137,7 +142,7 @@ else if ($path == "/authenticate" && $method == "GET") {
   } 
   $authToken = $_REQUEST["auth"];
   
-  $result = $db->query("SELECT username FROM USERS WHERE auth_token = '$authToken';")->fetchAll();
+  $result = $db->query("SELECT UserName FROM USERS WHERE auth_token = '$authToken';")->fetchAll();
 
   if(count($result) == 0) {
     header('Location: ../../src/alert.php?msg=NotAuthenticated');
@@ -146,9 +151,26 @@ else if ($path == "/authenticate" && $method == "GET") {
     $db->exec("UPDATE USERS SET Authenticated = TRUE WHERE username = '$Username'");
     header('Location: ../../src/alert.php?msg=Authenticated');
   }
+}
 
-
+// Reactivation
+else if ($path == "/activate" && $method == "GET") {  
   
+  if(!isset($_REQUEST["u"])) {
+    header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+    die();
+  } 
+  $user = $_REQUEST["u"];
+  
+  $result = $db->query("SELECT UserName FROM USERS WHERE UserName = '$user';")->fetchAll();
+
+  if(count($result) == 0) {
+    header('Location: ../../src/alert.php?msg=Not available account');
+  } else {
+    $Username = $result[0]["username"];
+    $db->exec("UPDATE USERS SET Authenticated = TRUE WHERE username = '$user'");
+    header('Location: ../../src/alert.php?msg=activate');
+  }
 }
 
 

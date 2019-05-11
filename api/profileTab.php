@@ -123,9 +123,7 @@ else if ($path == "/about" && $method == "GET") {
         
       });
 
-      // Am working heeerrreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
       $("#deactivateAccountBtn").click((e) => {
-        // alert("Deactivation clicked");
         if(confirm("Are you sure you want to deactivate your account?")){
           $url = `../api/user-account.php/deactivate-account?u=<?= $_SESSION["username"] ?>`;
 
@@ -134,7 +132,7 @@ else if ($path == "/about" && $method == "GET") {
             type: 'POST',
             success: (res) => {
               alert(res);
-              // window.location = "login.php"; 
+              window.location = "login.php"; 
             }
           });
         }
@@ -142,7 +140,6 @@ else if ($path == "/about" && $method == "GET") {
        
 
       $("#deleteAccountBtn").click((e) => {
-       
         if(confirm("Are you sure you want to delete your account?")){
           $url = `../api/user-account.php/delete-account?u=<?= $_SESSION["username"] ?>`;
 
@@ -156,7 +153,6 @@ else if ($path == "/about" && $method == "GET") {
           });
         }
       });
-      // till heeerrrrrrrrrrrrrrrrrrrrrrrrrrrrrreeeeeeeeeeeeeeeeee
 
       $('#profilePictureFileInput').change((e) => {
         var fileName = e.target.files[0].name;

@@ -18,9 +18,11 @@
     <h1 class="display-4">
       <?php 
         if(isset($_REQUEST["msg"])) {
-          if($_REQUEST["msg"] = "Authenticated") {
+          if($_REQUEST["msg"] == "Authenticated") {
             print("Authenticated! Please login.");
-          } else if($_REQUEST["msg"] = "NotAuthenticated") {
+          } else if ($_REQUEST["msg"] == "activate") {
+            print("Activated! Welcome Back!.");
+          }else if($_REQUEST["msg"] == "NotAuthenticated") {
             print("Authentication link is dead or expired.");
           } else {
             print("What");

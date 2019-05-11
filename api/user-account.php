@@ -21,8 +21,13 @@ if (!isset($_SESSION["username"]) || $_SESSION["username"] != $user) {
 
 
 if ($path == "/deactivate-account" && $method == "POST") {
-  echo "deactivation";
-
+  $result = $db->exec("UPDATE USERS SET Authenticated = 0 WHERE UserName = '$user';");
+  if ($result){
+    print "Account deactivated successfully!";
+    session_destroy();
+  } else {
+    print "Something went wrong while deactivating";
+  }
 
   
 } 
@@ -31,17 +36,12 @@ if ($path == "/deactivate-account" && $method == "POST") {
 else if ($path == "/delete-account" && $method == "POST") {
   $result = $db->exec("DELETE from users WHERE UserName='$user';");
   if ($result){
-    print("Account deleted successfully");
+    print("Account deleted successfully!");
     session_destroy();
   }else{
-      echo "what is wrong";
+      echo "Something went wrong while deleting";
   }
-} 
-
- 
-
-
-
+}
 
 
 else { 
