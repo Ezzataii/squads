@@ -70,7 +70,7 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
     </div>
 
     <div class="row justify-content-center" style="margin-top: 10px;">
-      <button type="button" class="btn btn-link" data-toggle="modal" data-target="#post-<?= $PostID ?>-comments">View Comments</button>
+      <button type="button" class="btn btn-link view-comments-btn" data-toggle="modal" data-target="#post-<?= $PostID ?>-comments">View Comments</button>
     </div>
 
   </div>
@@ -82,8 +82,8 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
           <h4 class="modal-title">Comments</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        <div class="modal-body">
-          <?= createComments($PostID, $Username); ?>
+        <div id="post-<?= $PostID ?>-comments-body" class="modal-body">
+          
         </div>
       </div>
     </div>
@@ -93,72 +93,12 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
 
 <?php
 }
-
-
-function createComments($PostID, $Username)
-{
-  $db = $GLOBALS["db"];
-
-  $comments = $db->query("SELECT * FROM COMMENTS WHERE post = '$PostID';")->fetchAll();
-  foreach ($comments as $comment) {
-    $comment_user = $comment["User"];
-    ?>
-    <div class="card comment">
-
-      <?php if (isset($_SESSION["username"]) &&  $_SESSION["username"] == $Username) : ?>
-        <div class="post-header">
-          <input type="hidden" name="commentID" value="<?= $comment["Comment_ID"] ?>">
-          <button type="button" class="close deleteCommentBtn">
-            &times;
-          </button>
-        </div>
-      <?php endif; ?>
-
-
-      <div class="row">
-        <div class="col-1">
-          <img src="<?= $GLOBALS["db"]->query("SELECT profilePicturePath FROM USERS WHERE username = '$comment_user';")->fetchAll()[0]["profilePicturePath"] ?>" alt="Profile Picture" style="float:left; width: 50px; border: 4px solid black;">
-        </div>
-        <div class="col-11">
-          <a href="profile.php?p=<?= $comment_user ?>"><b><?= $comment_user ?></b></a>
-
-          <blockquote class="blockquote mb-0">
-
-            <?= $comment["Comment"] ?>
-
-            <footer>
-              <div>
-                <a class="toggle-thumbs"><i class="fa fa-thumbs-up black"></i> <span class="thumbs-up-count">60</span></a>
-                &nbsp;
-                <a class="toggle-thumbs"><i class="fa fa-thumbs-down black"></i> <span class="thumbs-up-down">68</span></a>
-              </div>
-
-              <small class="text-muted">
-                Posted on <?= $comment["Date_Created"] ?>
-              </small>
-            </footer>
-          </blockquote>
-        </div>
-      </div>
-    </div>
-  <?php
-}
-}
 ?>
+
 
 <script>
   $(() => {
-    function refreshPage() {
-      var page_y = document.getElementsByTagName("body")[0].scrollTop;
-      window.location.href = window.location.href.split('?')[0] + '?page_y=' + page_y;
-    }
-
-    setTimeout(refreshPage, 35000);
-    if (window.location.href.indexOf('page_y') != -1) {
-      var match = window.location.href.split('?')[1].split("&")[0].split("=");
-      document.getElementsByTagName("body")[0].scrollTop = match[1];
-    }
-
+    
     $(".deletePostBtn").click((e) => {
       e.preventDefault();
       var postid = $(e.target).prev().val();
@@ -168,6 +108,7 @@ function createComments($PostID, $Username)
         }
       });
     });
+
 
     $(".comment-btn").click((e) => {
       e.preventDefault();
@@ -186,10 +127,20 @@ function createComments($PostID, $Username)
         processData: false,
         success: (res) => {
           $(target.parent().parent().children()[1]).val("");
-          location.reload();
         }
       });
     });
+
+
+    $(".view-comments-btn").click((e) => {
+      var target = $(e.target);
+
+      var postID = $(target.parent().prev().children()[0]).val();
+      
+      $.get(`../api/user-comment.php/comments?u=<?= $_SESSION["username"] ?>&postId=${postID}`, (res) => {
+        $(`#post-${postID}-comments-body`).html(res);
+      });
+    })
 
 
     $(".toggle-thumbs").click((e) => {
