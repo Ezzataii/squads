@@ -113,8 +113,8 @@ else if ($path == "/register" && $method == "POST") {
     if($valid) {
       $Auth_Token = izrand(32);
 
-      $statement = "INSERT INTO USERS  (Username, FirstName, LastName,  Email, Password, Authenticated, Auth_Token, ProfilePicturePath) 
-      VALUES ('$Username', '$FirstName', '$LastName',  '$Email', '$Password', FALSE, '$Auth_Token', '../assets/default-profile.png');";
+      $statement = "INSERT INTO USERS  (Username, FirstName, LastName,  Email, Password, Authenticated, Auth_Token, ProfilePicturePath, LevelOfAccess) 
+      VALUES ('$Username', '$FirstName', '$LastName',  '$Email', '$Password', FALSE, '$Auth_Token', '../assets/default-profile.png, public');";
       $db->exec($statement); 
 
       sendAuthEmail($Email, $Username, $Auth_Token);
