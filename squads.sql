@@ -10,6 +10,7 @@ CREATE TABLE USERS
   `Password`        VARCHAR(40),
   `Token`  	        VARCHAR(255),
   `Auth_Token`      VARCHAR(255),
+  `Reset_Token`     VARCHAR(255),
   `Authenticated`   tinyint(1),
   `LevelOfAccess`   VARCHAR(30),
   `About`           TEXT,
@@ -146,12 +147,13 @@ CREATE TABLE GROUPS
 -- -----
 CREATE TABLE POSTS
 (
-  `Post_ID`      INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `User`         VARCHAR(30),
-  `Date_Created` DATE,
-  `Text`         TEXT,
-  `MediaType`    VARCHAR(30),
-  `MediaPath`    TINYTEXT,
+  `Post_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `User`            VARCHAR(30),
+  `Date_Created`    DATE,
+  `LevelOfAccess`   VARCHAR(30),
+  `Text`            TEXT,
+  `MediaType`       VARCHAR(30),
+  `MediaPath`       TINYTEXT,
   FOREIGN KEY (`User`) REFERENCES USERS(`UserName`)
 );
 
@@ -172,6 +174,34 @@ CREATE TABLE COMMENTS
 CREATE INDEX COMMENTS_POST_INDEX ON COMMENTS (`Post`);
 
 
+
+
+-- -----
+-- LIKES
+-- -----
+CREATE TABLE POSTS_LIKES
+(
+  `Like_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `Post`            INT,   
+  `User`            VARCHAR(30),        
+  `Value`           BOOLEAN,
+  FOREIGN KEY (`Post`) REFERENCES POSTS(`Post_ID`),
+  FOREIGN KEY (`User`) REFERENCES USERS(`UserName`)
+);
+
+CREATE TABLE COMMENT_LIKES
+(
+  `Like_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `Comment`         INT,   
+  `User`            VARCHAR(30),        
+  `Value`           BOOLEAN,
+  FOREIGN KEY (`Comment`) REFERENCES POSTS(`Comment_ID`),
+  FOREIGN KEY (`User`) REFERENCES USERS(`UserName`)
+);
+
+-- --------
+-- MESSAGES
+-- --------
 CREATE TABLE MESSAGES 
 (
   `Message_ID`        INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
