@@ -1,6 +1,17 @@
 <?php
 include("../util/db.php");
 
+function generateThumb($actual, $value)
+{
+  if ($value == 0) {
+    print("thumb-off");
+  } else if ($actual == $value) {
+    print("thumb-on");
+  } else {
+    print("thumb-off");
+  }
+}
+
 $path = $_SERVER["PATH_INFO"];
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -28,10 +39,7 @@ if ($path == "/comment" && $method == "POST") {
   VALUES ('$postId', '$user', '$commentText', CURRENT_TIMESTAMP);");
 
   print("commented!");
-} 
-
-
-else if ($path == "/comments" && $method == "GET") {
+} else if ($path == "/comments" && $method == "GET") {
 
   if (!isset($_REQUEST["postId"])) {
     header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
@@ -44,7 +52,20 @@ else if ($path == "/comments" && $method == "GET") {
 
   foreach ($comments as $comment) {
     $comment_user = $comment["User"];
+
+    $commentID = $comment["Comment_ID"];
+    if ($commentID == NULL) {
+      continue;
+    }
+    $react = $db->query("SELECT * FROM COMMENT_REACTIONS WHERE Comment = '$commentID' AND User = '$user'")->fetchAll();
+    $value = 0;
+    if (count($react) != 0) {
+      $value = $react[0]["Value"];
+    }
+
+    $react = $db->query("SELECT IFNULL(COUNT(CASE WHEN cr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount, IFNULL(COUNT(CASE WHEN cr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM COMMENTS c JOIN COMMENT_REACTIONS cr ON c.COMMENT_ID = cr.Comment WHERE c.COMMENT_ID = '$commentID';")->fetchAll()[0];
     ?>
+
     <div class="card comment">
 
       <?php if (isset($_SESSION["username"]) &&  $_SESSION["username"] == $user) : ?>
@@ -70,9 +91,10 @@ else if ($path == "/comments" && $method == "GET") {
 
             <footer>
               <div>
-                <a class="toggle-thumbs"><i class="fa fa-thumbs-up black"></i> <span class="thumbs-up-count">60</span></a>
+                <i class="fa fa-thumbs-up <?php generateThumb(1, $value) ?> toggle-thumbs-comment" type="button"></i> <span class="thumbs-up-count"><?= $react["LikeCount"] ?></span>
                 &nbsp;
-                <a class="toggle-thumbs"><i class="fa fa-thumbs-down black"></i> <span class="thumbs-up-down">68</span></a>
+                <i class="fa fa-thumbs-down <?php generateThumb(-1, $value) ?> toggle-thumbs-comment" type="button"></i> <span class="thumbs-up-down"><?= $react["DislikeCount"] ?></span>
+                <input type="hidden" name="PostID" value="<?= $commentID ?>">
               </div>
 
               <small class="text-muted">
@@ -83,35 +105,93 @@ else if ($path == "/comments" && $method == "GET") {
         </div>
       </div>
     </div>
+
+
+    <script>
+      $(".deleteCommentBtn").click((e) => {
+        e.preventDefault();
+        var commentid = $(e.target).prev().val();
+        $.get(`../api/user-comment.php/delete/comment?u=<?= $_SESSION["username"] ?>&commentid=${commentid}`, (data) => {
+          if (data == "comment deleted.") {
+            $(e.target).parent().parent().remove();
+          }
+        });
+      });
+
+      $(".toggle-thumbs-comment").click((e) => {
+        console.log("hjere");
+        var target = $(e.target);
+        var thumbClass;
+        var value;
+
+        if (target.hasClass("fa-thumbs-up")) {
+          thumbClass = "fa-thumbs-up";
+        } else {
+          thumbClass = "fa-thumbs-down";
+        }
+
+        target.toggleClass("thumb-on thumb-off");
+
+
+        if (target.hasClass("thumb-off")) {
+          target.next().html(parseInt(target.next().html()) - 1);
+
+          value = 0;
+        } else {
+          target.next().html(parseInt(target.next().html()) + 1);
+
+          if (thumbClass == "fa-thumbs-up") {
+            value = 1;
+          } else {
+            value = -1;
+          }
+        }
+
+        var other;
+        if (thumbClass == "fa-thumbs-down") {
+          other = $(target.parent().children()[0]);
+          if (other.hasClass("thumb-on") && target.hasClass("thumb-on")) {
+            other.click();
+          }
+
+        } else {
+          other = $(target.parent().children()[2]);
+          if (other.hasClass("thumb-on") && target.hasClass("thumb-on")) {
+            other.click();
+          }
+        }
+
+        var formData = new FormData();
+        formData.append("commentId", $(target.parent().children()[4]).val());
+        formData.append("user", "<?= $_SESSION["username"] ?>");
+        formData.append("value", value);
+
+        $.ajax({
+          type: "POST",
+          url: "../api/user-reaction.php/react/comment?u=<?= $_SESSION["username"] ?>",
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: (res) => {
+            console.log(res);
+          }
+        });
+      });
+    </script>
   <?php
   }
 
-
 } else if ($path == "/delete/comment" && $method == "GET") {
-  if (!isset($_REQUEST["postid"])) {
+  if (!isset($_REQUEST["commentid"])) {
     header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
     die();
   }
-  $PostID = $_REQUEST["postid"];
+  $CommentID = $_REQUEST["commentid"];
 
-  $post = $db->query("SELECT MediaType, MediaPath FROM POSTS WHERE Post_ID = '$PostID';");
+  $db->query("DELETE FROM COMMENTS WHERE Comment_ID = '$CommentID';");
 
-  if ($post == false) {
-    print("post does not exist.");
-    die();
-  }
-
-  $post = $post->fetchAll()[0];
-
-  if ($post["MediaType"] == "Image" || $post["MediaType"] == "Video") {
-    if (file_exists($post["MediaPath"])) {
-      unlink($post["MediaPath"]);
-    }
-  }
-
-  $db->query("DELETE FROM POSTS WHERE Post_ID = '$PostID';");
-
-  print("post deleted.");
+  print("comment deleted.");
 } else {
   header($_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
 }

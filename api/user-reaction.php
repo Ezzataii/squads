@@ -35,8 +35,24 @@ if ($path == "/react/post" && $method == "POST") {
   print("reacted!");
 }
 
+
+
 else if ($path == "/react/comment" && $method == "POST") {
-  
+  if(!isset($_POST["commentId"]) || !isset($_POST["value"])) {
+    header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+    die();
+  }
+
+  $commentId = $_POST["commentId"];
+  $value = $_POST["value"];
+
+  if($value == 0) {
+    $db->query("DELETE FROM COMMENT_REACTIONS WHERE Comment = '$commentId' AND User = '$user'");
+  } else if ($value == -1 || $value == 1) {
+    $db->query("INSERT INTO COMMENT_REACTIONS (Comment, User, Value) VALUES ('$commentId', '$user', '$value')");
+  }
+
+  print("reacted!");
 }
 
 

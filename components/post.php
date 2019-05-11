@@ -210,15 +210,18 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
           console.log(res);
         }
       });
-
-
     });
+
 
   });
 </script>
 
 
 <style>
+  .modal-lg {
+    max-width: 50% !important;
+  }
+
   .post {
     margin: 10px;
     padding: 10px;
@@ -229,6 +232,8 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
     padding: 10px;
   }
 
+
+
   .thumb-on {
     color: blue;
   }
@@ -237,11 +242,12 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
     color: black;
   }
 
-  .modal-lg {
-    max-width: 50% !important;
-  }
 
   .toggle-thumbs-post {
+    border: none;
+  }
+
+  .toggle-thumbs-comment {
     border: none;
   }
 </style>
