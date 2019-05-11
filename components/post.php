@@ -1,9 +1,17 @@
 <?php
 include("../util/db.php");
 
+function generateThumb($actual, $value) {
+  if($value == 0) {
+    print("thumb-off");
+  } else if ($actual == $value) {
+    print("thumb-on");
+  } else {
+    print("thumb-off");
+  }
+}
 
-
-function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $PostID)
+function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $PostID, $LikeCount, $DislikeCount, $ReactValue)
 {
   if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -47,9 +55,10 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
 
           <footer>
             <div>
-              <a class="toggle-thumbs"><i class="fa fa-thumbs-up black"></i> <span class="thumbs-up-count">60</span></a>
+              <i class="fa fa-thumbs-up <?php generateThumb(1, $ReactValue) ?> toggle-thumbs-post" type="button"></i> <span class="thumbs-up-count"><?= $LikeCount ?></span>
               &nbsp;
-              <a class="toggle-thumbs"><i class="fa fa-thumbs-down black"></i> <span class="thumbs-up-down">68</span></a>
+              <i class="fa fa-thumbs-down <?php generateThumb(-1, $ReactValue) ?> toggle-thumbs-post" type="button"></i> <span class="thumbs-up-down"><?= $DislikeCount ?></span>
+              <input type="hidden" name="PostID" value="<?= $PostID ?>">
             </div>
 
             <small class="text-muted">
@@ -83,7 +92,7 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
         <div id="post-<?= $PostID ?>-comments-body" class="modal-body">
-          
+
         </div>
       </div>
     </div>
@@ -98,7 +107,7 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
 
 <script>
   $(() => {
-    
+
     $(".deletePostBtn").click((e) => {
       e.preventDefault();
       var postid = $(e.target).prev().val();
@@ -136,15 +145,73 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
       var target = $(e.target);
 
       var postID = $(target.parent().prev().children()[0]).val();
-      
+
       $.get(`../api/user-comment.php/comments?u=<?= $_SESSION["username"] ?>&postId=${postID}`, (res) => {
         $(`#post-${postID}-comments-body`).html(res);
       });
     })
 
 
-    $(".toggle-thumbs").click((e) => {
-      $(e.target).find("i").toggleClass("black blue");
+    $(".toggle-thumbs-post").click((e) => {
+      var target = $(e.target);
+      var thumbClass;
+      var value;
+
+      if (target.hasClass("fa-thumbs-up")) {
+        thumbClass = "fa-thumbs-up";
+      } else {
+        thumbClass = "fa-thumbs-down";
+      }
+
+      target.toggleClass("thumb-on thumb-off");
+
+
+      if(target.hasClass("thumb-off")) {
+        target.next().html(parseInt(target.next().html()) - 1);
+
+        value = 0;
+      } else {
+        target.next().html(parseInt(target.next().html()) + 1);
+
+        if(thumbClass == "fa-thumbs-up") {
+          value = 1;
+        } else {
+          value = -1;
+        }
+      }
+
+      var other;
+      if (thumbClass == "fa-thumbs-down") {
+        other = $(target.parent().children()[0]);
+        if (other.hasClass("thumb-on") && target.hasClass("thumb-on")) {
+          other.click();
+        }
+
+      } else {
+        other = $(target.parent().children()[2]);
+        if (other.hasClass("thumb-on") && target.hasClass("thumb-on")) {
+          other.click();
+        }
+      }
+
+      var formData = new FormData();
+      formData.append("postId", $(target.parent().children()[4]).val());
+      formData.append("user", "<?= $_SESSION["username"] ?>");
+      formData.append("value", value);
+
+      $.ajax({
+        type: "POST",
+        url: "../api/user-reaction.php/react/post?u=<?= $_SESSION["username"] ?>",
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: (res) => {
+          console.log(res);
+        }
+      });
+
+
     });
 
   });
@@ -162,15 +229,19 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
     padding: 10px;
   }
 
-  .black {
-    color: black;
+  .thumb-on {
+    color: blue;
   }
 
-  .blue {
-    color: blue;
+  .thumb-off {
+    color: black;
   }
 
   .modal-lg {
     max-width: 50% !important;
+  }
+
+  .toggle-thumbs-post {
+    border: none;
   }
 </style>

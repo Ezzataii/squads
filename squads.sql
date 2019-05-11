@@ -176,28 +176,30 @@ CREATE INDEX COMMENTS_POST_INDEX ON COMMENTS (`Post`);
 
 
 
--- -----
--- LIKES
--- -----
-CREATE TABLE POSTS_LIKES
+-- ---------
+-- REACTIONS
+-- ---------
+CREATE TABLE POST_REACTIONS
 (
-  `Like_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `Post`            INT,   
-  `User`            VARCHAR(30),        
-  `Value`           BOOLEAN,
+  `Reaction_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `Post`                INT,   
+  `User`                VARCHAR(30),        
+  `Value`               BOOLEAN,
   FOREIGN KEY (`Post`) REFERENCES POSTS(`Post_ID`),
   FOREIGN KEY (`User`) REFERENCES USERS(`UserName`)
 );
+CREATE UNIQUE INDEX POST_REACTIONS_POST_USER_INDEX ON POST_REACTIONS(`Post`, `User`);
 
-CREATE TABLE COMMENT_LIKES
+CREATE TABLE COMMENT_REACTIONS
 (
-  `Like_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `Comment`         INT,   
-  `User`            VARCHAR(30),        
-  `Value`           BOOLEAN,
+  `Reaction_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `Comment`             INT,   
+  `User`                VARCHAR(30),        
+  `Value`               BOOLEAN,
   FOREIGN KEY (`Comment`) REFERENCES POSTS(`Comment_ID`),
   FOREIGN KEY (`User`) REFERENCES USERS(`UserName`)
 );
+CREATE UNIQUE INDEX COMMENT_REACTIONS_COMMENT_USER_INDEX ON COMMENT_REACTIONS(`Comment`, `User`);
 
 -- --------
 -- MESSAGES

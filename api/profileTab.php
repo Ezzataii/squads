@@ -7,29 +7,36 @@ $user = $_REQUEST["u"];
 session_start();
 
 
-//GET FEED
+//GET TIMELINE
 if ($path == "/timeline" && $method == "GET") {
   ?> 
   <div class="container">
   <?php if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) : 
     include("../components/postForm.php"); 
-
-    $posts = $db->query("SELECT * FROM POSTS WHERE user = '$user' ORDER BY Date_Created DESC;")->fetchAll();
+  endif;
+    $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' ORDER BY Date_Created DESC;")->fetchAll();
     include("../components/post.php");
+    
+   
     foreach ($posts as $post) {
-      createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"]);
+
+      $postId = $post["Post_ID"];
+      if($postId == NULL) {
+        continue;
+      }
+      $react = $db->query("SELECT * FROM POST_REACTIONS WHERE Post = '$postId' AND User = '$user'")->fetchAll();
+      $value = 0;
+      if(count($react) != 0) {
+        $value = $react[0]["Value"];
+      }
+
+      $react = $db->query("SELECT IFNULL(COUNT(CASE WHEN pr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN pr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM POSTS p JOIN POST_REACTIONS pr ON p.Post_ID = pr.Post WHERE p.Post_ID = '$postId';")->fetchAll()[0];
+
+      createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"], $react["LikeCount"], $react["DislikeCount"], $value);
     }
+    
     ?>
-  <?php else :
-
-    //TODO ADD VISIBILITY 
-
-    $posts = $db->query("SELECT * FROM POSTS p JOIN USERS u ON p.User = u.Username WHERE user = '$user' AND u.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
-    include("../components/post.php");
-    foreach ($posts as $post) {
-      createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"]);
-    }
-    endif;?>
+  
 
   </div>
 
