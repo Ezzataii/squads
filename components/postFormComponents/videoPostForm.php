@@ -14,6 +14,20 @@
     </div>
   </div>
 
+  <label class="radio-inline">
+    <input type="radio" name="levelOfAccessRadioVideoPost" value="public" checked>
+    Public
+  </label> &nbsp;
+  <label class="radio-inline">
+    <input type="radio" name="levelOfAccessRadioVideoPost" value="friends-only">
+    Friends Only
+  </label> &nbsp;
+  <label>
+    <input type="radio" name="levelOfAccessRadioVideoPost" value="private">
+    Private
+  </label>
+  <br>
+
   <button type="submit" class="btn btn-primary btn-block">Post</button>
 
   <div id="videoPostFormStatus"></div>
@@ -34,6 +48,7 @@ $("#videoPostForm").submit((e) => {
   var formData = new FormData();
   formData.append("text", $("#videoPostFormText").val());
   formData.append("video", $("#videoPostFileInput").prop('files')[0]);
+  formData.append("level-of-access", $(`input:radio[name="levelOfAccessRadioVideoPost"]:checked`).val());
 
   $.ajax({
     type: 'POST',
@@ -44,6 +59,7 @@ $("#videoPostForm").submit((e) => {
     processData: false,
     success: (res) => {
       $("#videoPostFormStatus").html(res);
+      console.log(res);
       location.reload();
     }
   });

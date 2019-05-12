@@ -17,14 +17,25 @@ if(!isset($_SESSION["username"]) || $_SESSION["username"] != $user) {
 }
 
 
+
 if ($path == "/post/text" && $method == "POST") {
-  if(!isset($_POST["text"])) {
+  if(!isset($_POST["text"]) || !isset($_POST["level-of-access"])) {
     header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
     die();
   }
+
+  $levelOfAccess = $_POST["level-of-access"];
+
+  if($levelOfAccess != "public" && 
+     $levelOfAccess != "private" && 
+     $levelOfAccess != "friends-only") {
+      header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+      die();
+  }
+
   $text = $_POST["text"];
-  $db->exec("INSERT INTO `posts` (`Post_ID`, `User`, `Date_Created`, `Text`, `MediaType`, `MediaPath`) 
-  VALUES (NULL, '$user', CURRENT_TIMESTAMP, '$text', 'Text', NULL);");
+  $db->exec("INSERT INTO `posts` (`Post_ID`, `User`, `Date_Created`, `Text`, `MediaType`, `MediaPath`, `LevelOfAccess`) 
+  VALUES (NULL, '$user', CURRENT_TIMESTAMP, '$text', 'Text', NULL, '$levelOfAccess');");
 
   print("posted!");
 }
@@ -32,10 +43,20 @@ if ($path == "/post/text" && $method == "POST") {
 
 else if ($path == "/post/image" && $method == "POST") {
   $allowedExts = array("jpg", "jpeg", "gif", "png");
-  if(!isset($_POST["text"]) || !isset($_FILES["image"])) {
+  if(!isset($_POST["text"]) || !isset($_FILES["image"]) || !isset($_POST["level-of-access"])) {
     header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
     die();
   }
+
+  $levelOfAccess = $_POST["level-of-access"];
+
+  if($levelOfAccess != "public" && 
+     $levelOfAccess != "private" && 
+     $levelOfAccess != "friends-only") {
+      header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+      die();
+  }
+
   $text = $_POST["text"];
 
   $target_dir = "../db_blob/$user.postImage.";
@@ -43,10 +64,11 @@ else if ($path == "/post/image" && $method == "POST") {
   $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
   if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-    $db->exec("INSERT INTO `posts` (`Post_ID`, `User`, `Date_Created`, `Text`, `MediaType`, `MediaPath`) 
-    VALUES (NULL, '$user', CURRENT_TIMESTAMP, '$text', 'Image', '$target_file');");
+    $db->exec("INSERT INTO `posts` (`Post_ID`, `User`, `Date_Created`, `Text`, `MediaType`, `MediaPath`, `LevelOfAccess`) 
+    VALUES (NULL, '$user', CURRENT_TIMESTAMP, '$text', 'Image', '$target_file', '$levelOfAccess');");
 
     print("posted!");
+    print($levelOfAccess);
   } else {
     print("posting failed.");
   }
@@ -55,10 +77,20 @@ else if ($path == "/post/image" && $method == "POST") {
 
 else if ($path == "/post/video" && $method == "POST") {
   $allowedExts = array("mp4");
-  if(!isset($_POST["text"]) || !isset($_FILES["video"])) {
+  if(!isset($_POST["text"]) || !isset($_FILES["video"]) || !isset($_POST["level-of-access"])) {
     header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
     die();
   }
+
+  $levelOfAccess = $_POST["level-of-access"];
+
+  if($levelOfAccess != "public" && 
+     $levelOfAccess != "private" && 
+     $levelOfAccess != "friends-only") {
+      header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+      die();
+  }
+
   $text = $_POST["text"];
 
   $target_dir = "../db_blob/$user.postVideo.";
@@ -66,10 +98,11 @@ else if ($path == "/post/video" && $method == "POST") {
   $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
   if (move_uploaded_file($_FILES["video"]["tmp_name"], $target_file)) {
-    $db->exec("INSERT INTO `posts` (`Post_ID`, `User`, `Date_Created`, `Text`, `MediaType`, `MediaPath`) 
-    VALUES (NULL, '$user', CURRENT_TIMESTAMP, '$text', 'Video', '$target_file');");
+    $db->exec("INSERT INTO `posts` (`Post_ID`, `User`, `Date_Created`, `Text`, `MediaType`, `MediaPath`, `LevelOfAccess`) 
+    VALUES (NULL, '$user', CURRENT_TIMESTAMP, '$text', 'Video', '$target_file', '$levelOfAccess');");
 
     print("posted!");
+    print($levelOfAccess);
   } else {
     print("posting failed.");
   }
@@ -108,4 +141,3 @@ else if ($path == "/delete/post" && $method == "GET") {
 else { 
   header($_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
 }
-?>

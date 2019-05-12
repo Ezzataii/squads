@@ -14,6 +14,20 @@
     </div>
   </div>
 
+  <label class="radio-inline">
+    <input type="radio" name="levelOfAccessRadioImagePost" value="public" checked>
+    Public
+  </label> &nbsp;
+  <label class="radio-inline">
+    <input type="radio" name="levelOfAccessRadioImagePost" value="friends-only">
+    Friends Only
+  </label> &nbsp;
+  <label>
+    <input type="radio" name="levelOfAccessRadioImagePost" value="private">
+    Private
+  </label>
+  <br>
+
   <button type="submit" class="btn btn-primary btn-block">Post</button>
 
   <div id="imagePostFormStatus"></div>
@@ -34,6 +48,7 @@ $("#imagePostForm").submit((e) => {
   var formData = new FormData();
   formData.append("text", $("#imagePostFormText").val());
   formData.append("image", $("#imagePostFileInput").prop('files')[0]);
+  formData.append("level-of-access", $(`input:radio[name="levelOfAccessRadioImagePost"]:checked`).val());
 
   $.ajax({
     type: 'POST',
@@ -44,7 +59,8 @@ $("#imagePostForm").submit((e) => {
     processData: false,
     success: (res) => {
       $("#imagePostFormStatus").html(res);
-      location.reload();
+      console.log(res);
+      //location.reload();
     }
   });
 })

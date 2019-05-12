@@ -29,7 +29,7 @@
     <?php 
     include("../components/postForm.php"); 
 
-    $posts = $db->query("SELECT Users AS User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM ( SELECT f.Friend AS Users FROM USERS u RIGHT JOIN FRIENDS f ON u.UserName = f.User WHERE u.Username = '$user' UNION SELECT UserName FROM USERS WHERE Username = '$user') u JOIN POSTS p ON p.User = u.Users LEFT JOIN POST_REACTIONS pr ON pr.Post = p.Post_ID ORDER BY Date_Created DESC;")->fetchAll();
+    $posts = $db->query("SELECT Users AS User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM ( SELECT f.Friend AS Users FROM USERS u RIGHT JOIN FRIENDS f ON u.UserName = f.User WHERE u.Username = '$user' UNION SELECT UserName FROM USERS WHERE Username = '$user') u JOIN POSTS p ON p.User = u.Users LEFT JOIN POST_REACTIONS pr ON pr.Post = p.Post_ID WHERE p.LevelOfAccess != 'private' ORDER BY Date_Created DESC;")->fetchAll();
 
     // $posts = $db->query("SELECT DISTINCT ")
 
