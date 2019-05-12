@@ -32,7 +32,7 @@ function createPost($Username, $Date_Created, $Text, $MediaType, $MediaPath, $Po
 
     <div class="row">
       <div class="col-1">
-        <img src="<?= $GLOBALS["db"]->query("SELECT ProfilePicturePath FROM USERS WHERE UserName = '$Username';")->fetchAll()[0]["profilePicturePath"] ?>" alt="Profile Picture" style="float:left; width: 50px; border: 4px solid black;">
+        <img src="<?= $GLOBALS["db"]->query("SELECT ProfilePicturePath FROM USERS WHERE UserName = '$Username';")->fetchAll()[0]["ProfilePicturePath"] ?>" alt="Profile Picture" style="float:left; width: 50px; border: 4px solid black;">
       </div>
       <div class="col-11">
         <a href="profile.php?p=<?= $Username ?>"><b><?= $Username ?></b></a>
