@@ -20,7 +20,7 @@ if(count($db->query("SELECT username FROM USERS WHERE UserName = '$receiver';")-
 
 // checking sessions
 session_start();
-if(!isset($_SESSION["username"]) || $_SESSION["UserName"] != $sender) {
+if(!isset($_SESSION["username"]) || $_SESSION["username"] != $sender) {
   header($_SERVER["SERVER_PROTOCOL"] . ' 403 (Access Denied)');
   die();
 }
@@ -28,7 +28,7 @@ if(!isset($_SESSION["username"]) || $_SESSION["UserName"] != $sender) {
 
 
 if ($path == "/get-convo" && $method == "GET") {
-  $messages = $db->query("SELECT * FROM MESSAGES WHERE (Sender='$sender' and Receiver='$receiver') or (Sender='$receiver' and Receiver='$sender') ORDER BY Date_Created DESC;")->fetchAll();
+  $messages = $db->query("SELECT * FROM MESSAGES WHERE (Sender='$sender' and Receiver='$receiver') or (Sender='$receiver' and Receiver='$sender') ORDER BY Date_Created ASC;")->fetchAll();
   echo json_encode($messages);
 
   
