@@ -155,7 +155,7 @@ CREATE TABLE POSTS
 (
   `Post_ID`         INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `User`            VARCHAR(30),
-  `Date_Created`    DATE,
+  `Date_Created`    TIMESTAMP,
   `LevelOfAccess`   VARCHAR(30),
   `Text`            TEXT,
   `MediaType`       VARCHAR(30),
@@ -173,7 +173,7 @@ CREATE TABLE COMMENTS
   `Post`                INT,
   `User`                VARCHAR(30),
   `Comment`             TEXT,
-  `Date_Created`        DATE,
+  `Date_Created`        TIMESTAMP,
   FOREIGN KEY (`Post`) REFERENCES POSTS(`Post_ID`) ON DELETE CASCADE,
   FOREIGN KEY (`User`) REFERENCES USERS(`UserName`) ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET utf8;
@@ -216,7 +216,7 @@ CREATE TABLE MESSAGES
   `Sender`            VARCHAR(30),
   `Receiver`          VARCHAR(30),
   `Message`           TEXT,
-  `Date_Created`      DATE,
+  `Date_Created`      TIMESTAMP,
   FOREIGN KEY (`Sender`) REFERENCES USERS(`UserName`) ON DELETE CASCADE,
   FOREIGN KEY (`Receiver`) REFERENCES USERS(`UserName`) ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET utf8;
