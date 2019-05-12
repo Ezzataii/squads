@@ -235,6 +235,74 @@ else if ($path == "/activate" && $method == "GET") {
   }
 }
 
+// getting forget password form
+else if ($path == "/get-forget-passForm" && $method == "POST") {  
+  
+  if($_POST["Username"] == ""){
+    print "please Enter a userName";
+  } else {
+    $user = $_POST["Username"];
+    $result = $db->query("SELECT * FROM USERS WHERE UserName = '$user'")->fetchAll();
+
+    if (count($result) == 0){
+      print "Account doesn't exist";
+      die();
+    }
+
+    $Reset_Token = izrand(32);
+    $newResult = $db->exec("UPDATE USERS SET Reset_Token = '$Reset_Token' WHERE UserName = '$user';");
+
+    if (!$newResult){
+      print "Some error while setting the token";
+      die();
+    }
+ 
+    $Email = $result[0]["Email"];
+    sendForgotPassEmail($Email, $user, $Reset_Token);
+  }
+}
+
+
+
+// Reseting password
+else if ($path == "/forget-password" && $method == "POST") {  
+  
+  if(!isset($_REQUEST["token"]) || !isset($_REQUEST["u"])) {
+    header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
+    die();
+  }
+  
+  $user = $_REQUEST["u"];
+  $ResetToken = $_REQUEST["token"];
+  $result = $db->query("SELECT * FROM USERS WHERE Reset_Token = '$ResetToken';")->fetchAll();
+  
+  if(count($result) > 0) {
+    if ($result[0]["UserName"] != $user){
+      $user = $result["UserName"];
+      $db->exec("UPDATE users SET Reset_Token=null where UserName = '$user'");
+      print("MissMatch btn token and user");
+      die();
+    } else {
+      // Your code goes here
+      $pass = $_POST["newPassword"];
+      $repPass = $_POST["repNewPassword"];
+      if ($pass == $repPass){
+        $db->exec("UPDATE users SET Password='$pass' where UserName='$user'");
+        print "OK";
+      } else {
+        print "Passwords are not matching!";
+      }
+
+
+
+    }
+  } else if (count($result) == 0) {
+    print "Account doesn't exist";
+  } else {
+    print "There is something wrong";
+  }
+}
+
 
 
 // NO ROUTE MATCHED
