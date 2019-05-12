@@ -13,14 +13,14 @@ if(!isset($_REQUEST["r"]) && !isset($_REQUEST["s"])) {
 $sender = $_REQUEST["s"];
 $receiver = $_REQUEST["r"];
 
-if(count($db->query("SELECT username FROM USERS WHERE username = '$receiver';")->fetchAll()) == 0) {
+if(count($db->query("SELECT username FROM USERS WHERE UserName = '$receiver';")->fetchAll()) == 0) {
   print("User, \"$receiver\", Does Not Exist.");
   die();
 }
 
 // checking sessions
 session_start();
-if(!isset($_SESSION["username"]) || $_SESSION["username"] != $sender) {
+if(!isset($_SESSION["username"]) || $_SESSION["UserName"] != $sender) {
   header($_SERVER["SERVER_PROTOCOL"] . ' 403 (Access Denied)');
   die();
 }

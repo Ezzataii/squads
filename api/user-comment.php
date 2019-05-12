@@ -80,7 +80,7 @@ if ($path == "/comment" && $method == "POST") {
 
       <div class="row">
         <div class="col-1">
-          <img src="<?= $GLOBALS["db"]->query("SELECT profilePicturePath FROM USERS WHERE username = '$comment_user';")->fetchAll()[0]["profilePicturePath"] ?>" alt="Profile Picture" style="float:left; width: 50px; border: 4px solid black;">
+          <img src="<?= $GLOBALS["db"]->query("SELECT profilePicturePath FROM USERS WHERE UserName = '$comment_user';")->fetchAll()[0]["profilePicturePath"] ?>" alt="Profile Picture" style="float:left; width: 50px; border: 4px solid black;">
         </div>
         <div class="col-11">
           <a href="profile.php?p=<?= $comment_user ?>"><b><?= $comment_user ?></b></a>

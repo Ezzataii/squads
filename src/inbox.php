@@ -33,7 +33,7 @@ $user = $_SESSION["username"];
         <h4 class="container">Friends</h4>
         <ul class="list-group friends-list-container">
           <?php
-          $rows = $db->query("SELECT friend FROM FRIENDS WHERE user = '$user';")->fetchAll();
+          $rows = $db->query("SELECT Friend FROM FRIENDS WHERE User = '$user';")->fetchAll();
           if ($rows == false || count($rows) == 0) {
             print("<li class='list-group-item'>$user has no friends.</li>");
           } else {

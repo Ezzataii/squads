@@ -8,7 +8,7 @@ if (!isset($_REQUEST["p"])) {
 } else {
   $profile = $_REQUEST["p"];
 
-  $rows = $db->query("SELECT username FROM USERS WHERE username = '$profile';")->fetchAll();
+  $rows = $db->query("SELECT username FROM USERS WHERE UserName = '$profile';")->fetchAll();
   if (count($rows) == 0) {
   ?>
     <!DOCTYPE html>
@@ -61,7 +61,7 @@ if (!isset($_REQUEST["p"])) {
       <div class="jumbotron profile-header">
 
         <div style="display: inline-block; padding-top: 50px;">
-          <img src="<?= $db->query("SELECT profilePicturePath FROM USERS WHERE username = '$user';")->fetchAll()[0]["profilePicturePath"] ?>" 
+          <img src="<?= $db->query("SELECT profilePicturePath FROM USERS WHERE UserName = '$user';")->fetchAll()[0]["profilePicturePath"] ?>" 
           alt="Profile Picture" style="float:left; width: 100px; margin: 0px 30px; border: 4px solid black;" id="profilePicture">
           <h1 class="display-4" style="float:left">  <?= $_REQUEST["p"] ?>'s Profile</h1>
           <h4>(<?= $db->query("SELECT LevelOfAccess FROM USERS WHERE UserName = '$user';")->fetchAll()[0]["LevelOfAccess"] ?>)</h4>

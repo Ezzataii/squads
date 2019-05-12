@@ -25,7 +25,7 @@ if ($path == "/update/about" && $method == "POST") {
     die();
   } else {
     $about = $json->about;
-    $db->exec("UPDATE USERS SET About = '$about' WHERE username = '$user'");
+    $db->exec("UPDATE USERS SET About = '$about' WHERE UserName = '$user'");
     print("About Updated!");
   }
 }
@@ -43,7 +43,7 @@ else if ($path == "/update/profile-picture" && $method == "POST") {
     $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
     if (move_uploaded_file($_FILES["profilePicture"]["tmp_name"], $target_file)) {
-      $db->exec("UPDATE USERS SET profilePicturePath = '$target_file' WHERE username = '$user'");
+      $db->exec("UPDATE USERS SET profilePicturePath = '$target_file' WHERE UserName = '$user'");
       $_SESSION["profilePicture"] = $target_file; 
       print("The file ". basename( $_FILES["profilePicture"]["name"]). " has been uploaded.");
     } else {

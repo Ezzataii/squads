@@ -22,12 +22,12 @@ if(!isset($_SESSION["username"]) || $_SESSION["username"] != $from) {
 if ($path == "/send" && $method == "GET") {
   if($to == $from) {
     print("Cannot Add Yourself.");
-  } else if(count($db->query("SELECT username FROM USERS WHERE username = '$to';")->fetchAll()) == 0) {
+  } else if(count($db->query("SELECT username FROM USERS WHERE UserName = '$to';")->fetchAll()) == 0) {
     print("User, \"$to\", Does Not Exist.");
-  } else if (count($db->query("SELECT * FROM FRIENDS WHERE user = '$to' AND friend = '$from';")->fetchAll()) != 0) {
+  } else if (count($db->query("SELECT * FROM FRIENDS WHERE User = '$to' AND friend = '$from';")->fetchAll()) != 0) {
     print("Already Friends!");
   } else {
-    $rows = $db->exec("INSERT INTO FRIEND_REQUESTS (`from_user`, `to_user`) VALUES ('$from', '$to');");
+    $rows = $db->exec("INSERT INTO FRIEND_REQUESTS (`From_User`, `To_User`) VALUES ('$from', '$to');");
     print("Friend Request Sent!");
   }
 }
@@ -36,14 +36,14 @@ if ($path == "/send" && $method == "GET") {
 else if ($path == "/accept" && $method == "GET") {
   if($to == $from) {
     print("Cannot Accept Yourself.");
-  } else if(count($db->query("SELECT username FROM USERS WHERE username = '$to';")->fetchAll()) == 0) {
+  } else if(count($db->query("SELECT username FROM USERS WHERE UserName = '$to';")->fetchAll()) == 0) {
     print("User, \"$to\", Does Not Exist.");
-  } else if(count($db->query("SELECT * FROM FRIEND_REQUESTS WHERE from_user = '$to' AND to_user = '$from';")->fetchAll()) == 0) {
+  } else if(count($db->query("SELECT * FROM FRIEND_REQUESTS WHERE From_User = '$to' AND To_User = '$from';")->fetchAll()) == 0) {
     print("No incoming friend request from this user");
   } else {
     $db->exec("INSERT INTO FRIENDS (`user`, `friend`) VALUES ('$from', '$to');");
     $db->exec("INSERT INTO FRIENDS (`user`, `friend`) VALUES ('$to', '$from');");
-    $db->exec("DELETE FROM FRIEND_REQUESTS WHERE from_user = '$to' AND to_user = '$from';");
+    $db->exec("DELETE FROM FRIEND_REQUESTS WHERE From_User = '$to' AND To_User = '$from';");
     print("Friend Request Accepted!");
   }
 }
@@ -52,12 +52,12 @@ else if ($path == "/accept" && $method == "GET") {
 else if ($path == "/decline" && $method == "GET") {
   if($to == $from) {
     print("Cannot Decline Yourself.");
-  } else if(count($db->query("SELECT username FROM USERS WHERE username = '$to';")->fetchAll()) == 0) {
+  } else if(count($db->query("SELECT username FROM USERS WHERE UserName = '$to';")->fetchAll()) == 0) {
     print("User, \"$to\", Does Not Exist.");
-  } else if(count($db->query("SELECT * FROM FRIEND_REQUESTS WHERE from_user = '$to' AND to_user = '$from';")->fetchAll()) == 0) {
+  } else if(count($db->query("SELECT * FROM FRIEND_REQUESTS WHERE From_User = '$to' AND To_User = '$from';")->fetchAll()) == 0) {
     print("No incoming friend request from this user");
   } else {
-    $db->exec("DELETE FROM FRIEND_REQUESTS WHERE from_user = '$to' AND to_user = '$from';");
+    $db->exec("DELETE FROM FRIEND_REQUESTS WHERE From_User = '$to' AND To_User = '$from';");
     print("Friend Request Accepted!");
   }
 }
@@ -68,12 +68,12 @@ else if ($path == "/delete" && $method == "GET") {
   if($to == $from) {
     print("Cannot Decline Yourself.");
   } else {
-    $rows = $db->query("SELECT username FROM USERS WHERE username = '$to';")->fetchAll();
+    $rows = $db->query("SELECT username FROM USERS WHERE UserName = '$to';")->fetchAll();
     if(count($rows) == 0) {
       print("User, \"$to\", Does Not Exist.");
     } else {
-      $db->exec("DELETE FROM FRIENDS WHERE user = '$to' AND friend = '$from';");
-      $db->exec("DELETE FROM FRIENDS WHERE user = '$from' AND friend = '$to';");
+      $db->exec("DELETE FROM FRIENDS WHERE User = '$to' AND Friend = '$from';");
+      $db->exec("DELETE FROM FRIENDS WHERE User = '$from' AND Friend = '$to';");
       print("Friend Deleted.");
     }
   }

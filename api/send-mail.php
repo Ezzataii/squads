@@ -17,7 +17,7 @@ function sendAuthEmail($Email, $Username, $Auth_Token) {
   }
 
 
-  function sendActivationEmail($Email, $Username, $Auth_Token) {
+  function sendActivationEmail($Email, $Username, $Activation_Token) {
     $Subject  = 'Squads Account Reactivation';
     $Headers  = 'From: Subpar.Squads.Auth@gmail.com@gmail.com' . "\r\n" .
                 'MIME-Version: 1.0' . "\r\n" .
@@ -27,7 +27,7 @@ function sendAuthEmail($Email, $Username, $Auth_Token) {
                 Welcome back to Squads, we have really missed you!<br><br>
                 Please press the following link to reactivate your account and get back all of your information!<br>
                 Ignore if you don't want to reactivate your account, although we would be sad :( <br>            
-                <a href=\"http://localhost/278/project/api/gateway.php/activate?u=$Username\">Activate!</a>";          
+                <a href=\"http://localhost/278/project/api/gateway.php/activate?token=$Activation_Token\">Activate!</a>";          
   
     if(mail($Email, $Subject, $Message, $Headers))
         echo "<br>An email has been sent to you, activate to continue :)";

@@ -45,7 +45,7 @@ if ($path == "/timeline" && $method == "GET") {
 
 //GET ABOUT
 else if ($path == "/about" && $method == "GET") {
-  $result = $db->query("SELECT About FROM USERS WHERE username = '$user';")->fetchAll()[0];
+  $result = $db->query("SELECT About FROM USERS WHERE UserName = '$user';")->fetchAll()[0];
   ?>
 
   <?php if ($_SESSION["username"] == $user) : ?>
@@ -125,7 +125,7 @@ else if ($path == "/about" && $method == "GET") {
 
       $("#deactivateAccountBtn").click((e) => {
         if(confirm("Are you sure you want to deactivate your account?")){
-          $url = `../api/user-account.php/deactivate-account?u=<?= $_SESSION["username"] ?>`;
+          $url = `../api/gateway.php/deactivate-account?u=<?= $_SESSION["username"] ?>`;
 
           $.ajax({
             url: $url,
@@ -141,7 +141,7 @@ else if ($path == "/about" && $method == "GET") {
 
       $("#deleteAccountBtn").click((e) => {
         if(confirm("Are you sure you want to delete your account?")){
-          $url = `../api/user-account.php/delete-account?u=<?= $_SESSION["username"] ?>`;
+          $url = `../api/gateway.php/delete-account?u=<?= $_SESSION["username"] ?>`;
 
           $.ajax({
             url: $url,
@@ -249,7 +249,7 @@ else if ($path == "/friends" && $method == "GET") {
       <h3>Friends: </h3>
       <ul class="list-group">
         <?php
-        $rows = $db->query("SELECT friend FROM FRIENDS WHERE user = '$user';")->fetchAll();
+        $rows = $db->query("SELECT Friend FROM FRIENDS WHERE User = '$user';")->fetchAll();
         if ($rows == false || count($rows) == 0) {
           print("<li class='list-group-item'>$user has no friends.</li>");
         } else {
@@ -299,7 +299,7 @@ else if ($path == "/friend-requests" && $method == "GET") {
         <h2>Friend Requests:</h2>
         <ul class="list-group">
           <?php
-          $rows = $db->query("SELECT from_user FROM FRIEND_REQUESTS WHERE to_user = '$user';")->fetchAll();
+          $rows = $db->query("SELECT From_User FROM FRIEND_REQUESTS WHERE To_User = '$user';")->fetchAll();
           if ($rows == false || count($rows) == 0) {
             print("<li class='list-group-item'>You have no incoming friend requests</li>");
           } else {
