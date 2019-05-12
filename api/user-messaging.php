@@ -4,7 +4,7 @@ include("../util/db.php");
 $path = $_SERVER["PATH_INFO"];
 $method = $_SERVER['REQUEST_METHOD'];
 
-if(!isset($_REQUEST["r"]) && !isset($_REQUEST["s"])) {
+if(!isset($_REQUEST["r"]) || !isset($_REQUEST["s"])) {
   header($_SERVER["SERVER_PROTOCOL"] . ' 422 (Unprocessable Entity)');
   die();
 }

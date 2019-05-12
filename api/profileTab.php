@@ -221,6 +221,9 @@ else if ($path == "/about" && $method == "GET") {
           processData: false,
           success: (res) => {
             $("#profilePictureStatus").html(res);
+            $.get("../api/user-data.php/profile-picture?u=<?= $user ?>", (res) => {
+              $("#pageProfilePicture").attr("src", res)
+            }); 
           }
         });
       });
