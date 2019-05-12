@@ -134,6 +134,25 @@ else if ($path == "/register" && $method == "POST") {
   }
 }
 
+else if($path == "/reset-password" && $method == "POST") {
+  session_start(); 
+  if (!isset($_SESSION["username"])) {
+    header($_SERVER["SERVER_PROTOCOL"] . ' 403 (Access Denied)');
+    die();
+  }
+
+  $user = $_SESSION["username"];
+
+  $newPassowrd = $_POST["newPassword"];
+
+  if($newPassowrd != $_POST["confirmNewPassword"]) {
+    print("passwords do not match");
+  } else {
+    $db->exec("UPDATE USERS SET password = '$newPassowrd' WHERE UserName = '$user';");
+    print("password changed!");
+  }
+}
+
 
 // Deactivate account
 else if ($path == "/deactivate-account" && $method == "POST") {

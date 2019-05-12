@@ -9,48 +9,48 @@ session_start();
 
 //GET TIMELINE
 if ($path == "/timeline" && $method == "GET") {
-  ?> 
-  <div class="container">
-  <?php if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) : 
-    include("../components/postForm.php"); 
-   
-  endif;
-
-  $posts = [];
-  
-  if(isset($_SESSION["username"])) {
-    $sessionUser = $_SESSION["username"];
-  }
-
-  if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) {
-    $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' ORDER BY Date_Created DESC;")->fetchAll();
-  } else if(isset($_SESSION["username"]) && count($db->query("SELECT * FROM FRIENDS WHERE User = '$user' AND Friend = '$sessionUser';")->fetchAll()) != 0) {
-    $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND p.LevelOfAccess = 'friends-only' OR p.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
-  } else {
-    $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND p.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
-  }
-    
-  include("../components/post.php");
-
-  foreach ($posts as $post) {
-
-    $postId = $post["Post_ID"];
-    if($postId == NULL) {
-      continue;
-    }
-    $react = $db->query("SELECT * FROM POST_REACTIONS WHERE Post = '$postId' AND User = '$user'")->fetchAll();
-    $value = 0;
-    if(count($react) != 0) {
-      $value = $react[0]["Value"];
-    }
-
-    $react = $db->query("SELECT IFNULL(COUNT(CASE WHEN pr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN pr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM POSTS p JOIN POST_REACTIONS pr ON p.Post_ID = pr.Post WHERE p.Post_ID = '$postId';")->fetchAll()[0];
-
-    createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"], $react["LikeCount"], $react["DislikeCount"], $value);
-  }
-  
   ?>
-  
+  <div class="container">
+    <?php if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) :
+      include("../components/postForm.php");
+
+    endif;
+
+    $posts = [];
+
+    if (isset($_SESSION["username"])) {
+      $sessionUser = $_SESSION["username"];
+    }
+
+    if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) {
+      $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' ORDER BY Date_Created DESC;")->fetchAll();
+    } else if (isset($_SESSION["username"]) && count($db->query("SELECT * FROM FRIENDS WHERE User = '$user' AND Friend = '$sessionUser';")->fetchAll()) != 0) {
+      $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND p.LevelOfAccess = 'friends-only' OR p.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
+    } else {
+      $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND p.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
+    }
+
+    include("../components/post.php");
+
+    foreach ($posts as $post) {
+
+      $postId = $post["Post_ID"];
+      if ($postId == NULL) {
+        continue;
+      }
+      $react = $db->query("SELECT * FROM POST_REACTIONS WHERE Post = '$postId' AND User = '$user'")->fetchAll();
+      $value = 0;
+      if (count($react) != 0) {
+        $value = $react[0]["Value"];
+      }
+
+      $react = $db->query("SELECT IFNULL(COUNT(CASE WHEN pr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN pr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM POSTS p JOIN POST_REACTIONS pr ON p.Post_ID = pr.Post WHERE p.Post_ID = '$postId';")->fetchAll()[0];
+
+      createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"], $react["LikeCount"], $react["DislikeCount"], $value);
+    }
+
+    ?>
+
 
   </div>
 
@@ -80,8 +80,8 @@ else if ($path == "/about" && $method == "GET") {
 
     <div class="container">
       <h4>Update Profile Level of Access</h4>
-      
-        
+
+
       <label class="radio-inline">
         <input type="radio" name="levelOfAccessRadio" id="levelOfAccessRadioPublic" value="public">
         Public
@@ -113,13 +113,37 @@ else if ($path == "/about" && $method == "GET") {
     <br>
     <br>
 
+
     <div class="container">
-      <h4>Account Settings</h4>
+      <h4>Reset Password</h4>
+
+      <form id="resetPasswordForm">
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" class="form-control" id="newPassword" placeholder="enter new password" name="newPassword">
+        </div>
+        <div class="form-group">
+          <label for="confirmNewPassword">Confirm New Password</label>
+          <input type="password" class="form-control" id="confirmNewPassword" placeholder="confirm new password" name="confirmNewPassword">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Reset</button>
+
+        <div>
+          <div id="resetPasswordStatus"></div>
+        </div>
+      </form>
+    </div>
+    <br>
+    <br>
+
+
+    <div class="container">
+      <h4>Account Status</h4>
       <button class="btn btn-danger" id="deactivateAccountBtn">Deactivate Account</button>
       &nbsp;
       &nbsp;
       <button class="btn btn-danger" id="deleteAccountBtn"> Delete Account</button>
-
     </div>
 
     <style>
@@ -132,11 +156,25 @@ else if ($path == "/about" && $method == "GET") {
         $.get("../api/user-about.php/level-of-access?u=<?= $user ?>", (data) => {
           $(`input:radio[name="levelOfAccessRadio"][value=${data}]`).prop("checked", true);
         });
-        
+
+      });
+
+      $("#resetPasswordForm").submit((e) => {
+        e.preventDefault();
+
+        var formData = $("#resetPasswordForm").serialize();
+        $.ajax({
+          type: "POST",
+          url: "http://localhost/278/project/api/gateway.php/reset-password",
+          data: formData,
+          success: (res) => {
+            $("#resetPasswordStatus").html(res);
+          }
+        })
       });
 
       $("#deactivateAccountBtn").click((e) => {
-        if(confirm("Are you sure you want to deactivate your account?")){
+        if (confirm("Are you sure you want to deactivate your account?")) {
           $url = `../api/gateway.php/deactivate-account?u=<?= $_SESSION["username"] ?>`;
 
           $.ajax({
@@ -144,15 +182,15 @@ else if ($path == "/about" && $method == "GET") {
             type: 'POST',
             success: (res) => {
               alert(res);
-              window.location = "login.php"; 
+              window.location = "login.php";
             }
           });
         }
       });
-       
+
 
       $("#deleteAccountBtn").click((e) => {
-        if(confirm("Are you sure you want to delete your account?")){
+        if (confirm("Are you sure you want to delete your account?")) {
           $url = `../api/gateway.php/delete-account?u=<?= $_SESSION["username"] ?>`;
 
           $.ajax({
@@ -160,7 +198,7 @@ else if ($path == "/about" && $method == "GET") {
             type: 'POST',
             success: (res) => {
               alert(res);
-              window.location = "login.php"; 
+              window.location = "login.php";
             }
           });
         }
@@ -267,8 +305,8 @@ else if ($path == "/friends" && $method == "GET") {
         } else {
           foreach ($rows as $row) {
             ?>
-            <a href="profile.php?p=<?= $row["friend"] ?>" class="list-group-item clearfix list-group-item-action">
-              <span><?= $row["friend"] ?></span>
+            <a href="profile.php?p=<?= $row["Friend"] ?>" class="list-group-item clearfix list-group-item-action">
+              <span><?= $row["Friend"] ?></span>
 
               <?php if ($_SESSION["username"] == $user) : ?>
                 <div class="pull-right">

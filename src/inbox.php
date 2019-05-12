@@ -40,7 +40,7 @@ $user = $_SESSION["username"];
             foreach ($rows as $row) {
               ?>
               <a href="" class="list-group-item clearfix list-group-item-action friend-btn">
-                <span><?= $row["friend"] ?></span>
+                <span><?= $row["Friend"] ?></span>
               </a>
             <?php
           }
