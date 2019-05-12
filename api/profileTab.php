@@ -101,12 +101,10 @@ else if ($path == "/about" && $method == "GET") {
 
     <div class="container">
       <h4>Account Settings</h4>
-      <br>
-
-      <button class="btn btn-primary" id="deactivateAccountBtn">Deactivate Account</button>
+      <button class="btn btn-danger" id="deactivateAccountBtn">Deactivate Account</button>
       &nbsp;
       &nbsp;
-      <button class="btn btn-primary" id="deleteAccountBtn"> Delete Account</button>
+      <button class="btn btn-danger" id="deleteAccountBtn"> Delete Account</button>
 
     </div>
 
