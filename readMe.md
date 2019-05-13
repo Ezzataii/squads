@@ -3,7 +3,8 @@
 
 ## Getting  Project Setup:
 1. Place the project in your WAMP's www. directory
-2. Create a database named squads and run the ```squads.sql``` commmands
+2. Make sure the path to the project follows the following: ```278/projects/.git```
+3. Create a database named squads and run the ```squads.sql``` commmands
 
 
 
