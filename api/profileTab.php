@@ -25,7 +25,7 @@ if ($path == "/timeline" && $method == "GET") {
     if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) {
       $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' ORDER BY Date_Created DESC;")->fetchAll();
     } else if (isset($_SESSION["username"]) && count($db->query("SELECT * FROM FRIENDS WHERE User = '$user' AND Friend = '$sessionUser';")->fetchAll()) != 0) {
-      $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND p.LevelOfAccess = 'friends-only' OR p.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
+     $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND (p.LevelOfAccess = 'friends-only' OR p.LevelOfAccess = 'public') ORDER BY Date_Created DESC;")->fetchAll();
     } else {
       $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND p.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
     }
@@ -38,7 +38,8 @@ if ($path == "/timeline" && $method == "GET") {
       if ($postId == NULL) {
         continue;
       }
-      $react = $db->query("SELECT * FROM POST_REACTIONS WHERE Post = '$postId' AND User = '$user'")->fetchAll();
+      $sessionUser = $_SESSION["username"];
+      $react = $db->query("SELECT * FROM POST_REACTIONS WHERE Post = '$postId' AND User = '$sessionUser'")->fetchAll();
       $value = 0;
       if (count($react) != 0) {
         $value = $react[0]["Value"];
