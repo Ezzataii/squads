@@ -95,6 +95,7 @@ $user = $_SESSION["username"];
       url: $url,
       type: 'GET',
       success: (res) => {
+        console.log(res);
         var msgs = JSON.parse(res);
         $("#msg-box").html("");
         var name;

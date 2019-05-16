@@ -101,7 +101,7 @@ else if ($path == "/register" && $method == "POST") {
     $statement = "SELECT * FROM USERS WHERE UserName = '$Username';";
     $result = $db->query($statement); 
     if($result->rowCount() != 0) {
-      $error .= " Username Taken.";
+      $error = " Username Taken.";
       $valid = false;
     }
     //Email Correct

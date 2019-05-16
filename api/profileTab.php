@@ -25,7 +25,7 @@ if ($path == "/timeline" && $method == "GET") {
     if (isset($_SESSION["username"]) && $_SESSION["username"] == $user) {
       $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' ORDER BY Date_Created DESC;")->fetchAll();
     } else if (isset($_SESSION["username"]) && count($db->query("SELECT * FROM FRIENDS WHERE User = '$user' AND Friend = '$sessionUser';")->fetchAll()) != 0) {
-     $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND (p.LevelOfAccess = 'friends-only' OR p.LevelOfAccess = 'public') ORDER BY Date_Created DESC;")->fetchAll();
+      $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND (p.LevelOfAccess = 'friends-only' OR p.LevelOfAccess = 'public') ORDER BY Date_Created DESC;")->fetchAll();
     } else {
       $posts = $db->query("SELECT p.User as User, Date_Created, Text, MediaType, MediaPath, Post_ID FROM POSTS p WHERE p.User = '$user' AND p.LevelOfAccess = 'public' ORDER BY Date_Created DESC;")->fetchAll();
     }
@@ -224,7 +224,7 @@ else if ($path == "/about" && $method == "GET") {
             $("#profilePictureStatus").html(res);
             $.get("../api/user-data.php/profile-picture?u=<?= $user ?>", (res) => {
               $("#pageProfilePicture").attr("src", res)
-            }); 
+            });
           }
         });
       });
@@ -402,6 +402,139 @@ else if ($path == "/friend-requests" && $method == "GET") {
     </div>
   <?php
 }
+}
+
+
+//GET CLANS
+else if ($path == "/clans" && $method == "GET") {
+  ?>
+  <div class="container">
+
+  <?php if ($_SESSION["username"] == $user) : ?>
+  <!-- CREATE CLAN -->
+    <h3>Create Clan:</h3>
+    <form id="createClanForm">
+      <h4>Clan Name</h4>
+      <input type="text" name="clanName" id="clanNameCreateForm" class="form-control" placeholder="Enter clan name">
+      <br>
+      <h4>Clan Description</h4>
+      <textarea name="clanDescription" id="clanDescriptionCreateForm" cols="123" rows="5" class="form-control" placeholder="Enter clan description"></textarea>
+      <br>
+      <button type="submit" class="btn btn-primary" id="createClanBtn">Create</button>
+      <div id="createClanStatus" style="color: red;"></div>
+    </form>
+    <br>
+    <script>
+      $("#createClanBtn").click((e) => {
+        e.preventDefault();
+        var formData = $("#createClanForm").serialize();
+        $.ajax({
+          url: `../api/clan.php/create-clan`,
+          type: 'POST',
+          dataType: 'json',
+          data: formData,
+          success: (res) => {
+            console.log(formData.clanName);
+            if(res == "Clan Created") {
+              window.location.href = `clan.php?n=${formData.clanName}`;
+            } else {
+              $("#createClanStatus").html(res);
+            }
+          }
+        });
+      });
+    </script>
+    <hr>
+  <!-- FIND CLAN -->
+    <h3>Find Clan:</h3>
+    <form id="formFindClan">
+
+      <div class="form-group">
+        <input list="clanNameList" class="form-control" name="clan" id="clanNameText" placeholder="Enter clan name">
+        <datalist id="clanNameList">
+          <option value="Hello"></option>
+        </datalist>
+      </div>
+      
+      <button type="submit" class="btn btn-primary" id="findClanSubmitBtn">Send</button>
+      <div id="findClanStatus" style="color: red;"></div>
+    </form>
+    <br>
+
+
+    <script>
+      $("#clanNameText").keypress((e) => {
+        $.ajax({
+          url: `../api/clan.php/find-clan?n=${$("#clanNameText").val()}`,
+          type: 'GET',
+          success: (res) => {
+            var json = JSON.parse(res);
+            console.log(json);
+            var clanList = $("#clanNameList");
+            clanList.html("");
+
+            json.forEach(clan => {
+              clanList.append(`<option value='${clan.ClanName}'>`);
+            });
+          }
+        });
+      });
+
+
+
+      $("#findClanSubmitBtn").click((e) => {
+        e.preventDefault();
+        window.location.href = `clan.php?n=${$("#clanNameText").val()}`;
+      });
+    </script>
+  <?php endif; ?>
+
+
+
+  <!-- Clan List -->
+    <hr>
+    <h3>Clans: </h3>
+    <ul class="list-group">
+
+      <?php
+      $rows = $db->query("SELECT ClanName FROM CLANS c JOIN USER_CLAN uc ON c.ClanName = uc.Clan WHERE uc.User = '$user';")->fetchAll();
+      if ($rows == false || count($rows) == 0) {
+        print("<li class='list-group-item'>$user is not in any clan.</li>");
+      } else {
+        foreach ($rows as $row) {
+          ?>
+
+          <a href="clan.php?n=<?= $row["ClanName"] ?>" class="list-group-item clearfix list-group-item-action">
+            <span><?= $row["ClanName"] ?></span>
+          </a>
+
+        <?php
+      }
+    }
+    ?>
+    </ul>
+  </div>
+
+
+
+
+
+  <?php if ($_SESSION["username"] == $user) : ?>
+    <script>
+      $("#friendDeleteBtn").click((e) => {
+        e.preventDefault();
+        $.ajax({
+          url: `../api/user-friend.php/delete?from=<?= $user ?>&to=${$(e.target).parent().prev().html()}`,
+          type: 'GET',
+          success: function(res) {
+            $(e.target).closest('.list-group-item').remove();
+            $("#friendsProfileNavBtn").click();
+          }
+        });
+      });
+    </script>
+  <?php
+endif;
 }
 
 

@@ -26,7 +26,7 @@ if (!isset($_REQUEST["p"])) {
       <?php include("../components/navbar.php"); ?>
 
       <div style="display: inline-block; padding-top: 50px;">
-        <h1 class="display-4" style="float:left; color: red;"> &nbsp; <?= $_REQUEST["p"] ?>Does Not Exist</h1>
+        <h1 class="display-4" style="float:left; color: red;"> &nbsp; <?= $_REQUEST["p"] ?> Does Not Exist</h1>
       </div>
 
       <?php include("../components/footer.php"); ?>
@@ -82,6 +82,9 @@ if (!isset($_REQUEST["p"])) {
               <a class="nav-link profile-navbtn" href="friend-requests" id="friendRequestsProfileNavBtn">Friend Requests</a>
             </li>
           <?php endif; ?>
+          <li class="nav-item">
+            <a class="nav-link profile-navbtn" href="clans" id="clansNavBtn">Clans</a>
+          </li>
         </nav>
       </div>
 
