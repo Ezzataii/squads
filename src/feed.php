@@ -47,7 +47,7 @@
         $value = $react[0]["Value"];
       }
 
-      $react = $db->query("SELECT IFNULL(COUNT(CASE WHEN pr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN pr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM POSTS p JOIN POST_REACTIONS pr ON p.Post_ID = pr.Post WHERE p.Post_ID = '$postId';")->fetchAll()[0];
+      $react = $db->query("SELECT * FROM `post_reaction_count` WHERE Post_ID = '$postId';")->fetchAll()[0];
 
       createPost($post["User"], $post["Date_Created"], $post["Text"], $post["MediaType"], $post["MediaPath"], $post["Post_ID"], $react["LikeCount"], $react["DislikeCount"], $value);
     }

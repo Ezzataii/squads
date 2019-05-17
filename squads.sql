@@ -232,6 +232,6 @@ CREATE INDEX MESSAGES_RECEIVER_INDEX ON MESSAGES (`Receiver`);
 
 CREATE VIEW groups_count AS SELECT Name, Admin, MaxSize, Status, Description, Game, Server, COUNT(sg.Solo) as Size FROM GROUPS g LEFT OUTER JOIN SOLO_GROUP sg ON g.Name = sg.Group;
 
-CREATE VIEW post_reaction_count AS SELECT p.User, pr.Post, IFNULL(COUNT(CASE WHEN pr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN pr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM POSTS p JOIN POST_REACTIONS pr ON p.Post_ID = pr.Post GROUP BY pr.Post;
+CREATE VIEW post_reaction_count AS SELECT p.User, p.Post_ID, IFNULL(COUNT(CASE WHEN pr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN pr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM POSTS p left outer JOIN POST_REACTIONS pr ON p.Post_ID = pr.Post GROUP BY p.Post_ID;
 
-CREATE VIEW comment_reaction_count AS SELECT c.User, cr.Comment, IFNULL(COUNT(CASE WHEN cr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN cr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM COMMENTS c JOIN COMMENT_REACTIONS cr ON c.Comment_ID = cr.Comment GROUP BY cr.Comment;
+CREATE VIEW comment_reaction_count SELECT c.User, c.Comment_ID, IFNULL(COUNT(CASE WHEN cr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount,IFNULL(COUNT(CASE WHEN cr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM COMMENTS c left outer JOIN COMMENT_REACTIONS cr ON c.Comment_ID = cr.Comment GROUP BY c.Comment_ID;

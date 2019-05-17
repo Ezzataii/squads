@@ -63,7 +63,7 @@ if ($path == "/comment" && $method == "POST") {
       $value = $react[0]["Value"];
     }
 
-    $react = $db->query("SELECT IFNULL(COUNT(CASE WHEN cr.Value = '1' THEN 1 ELSE NULL END), 0) AS LikeCount, IFNULL(COUNT(CASE WHEN cr.Value = '-1' THEN 1 ELSE NULL END), 0) AS DislikeCount FROM COMMENTS c JOIN COMMENT_REACTIONS cr ON c.COMMENT_ID = cr.Comment WHERE c.COMMENT_ID = '$commentID';")->fetchAll()[0];
+    $react = $db->query("SELECT * FROM `comment_reaction_count` WHERE COMMENT_ID = '$commentID';")->fetchAll()[0];
     ?>
 
     <div class="card comment">
